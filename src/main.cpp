@@ -40,6 +40,7 @@ class Tetramino
     sf::Vector2i tpos;
     std::array<Square, GRID_W*GRID_H> grid;
 
+    int current;
     int next;
     int current_col;
     int next_col;
@@ -49,9 +50,14 @@ class Tetramino
        -----
        |2|3|
        ----- */
-    std::array<std::array<int, 4>, 7> figures
+    std::array<std::array<int, 4>, 7> tetramino
     { 
         { {1,3,5,7}, {2,4,5,7}, {3,4,5,6}, {3,4,5,7}, {2,3,5,7}, {3,5,6,7}, {2,3,4,5} } 
+    };
+
+    std::array<std::array<int, 2>, 7> centers
+    {
+        { {1,1}, {0,2}, {0,2}, {1,2}, {1,2}, {1,2}, {1,2} }
     };
 
     std::array<sf::Color, 7> colors
@@ -117,9 +123,10 @@ public:
     void genTetramino()
     {
         current_col = next_col;
+        current = next;
 
-        sf::Vector2i center(1, 1);
-        for(int i = 0; int& n : figures[next])
+        sf::Vector2i center(centers[current][0], centers[current][1]);
+        for(int i = 0; int& n : tetramino[current])
         {
             sf::Vector2i p(n % TETRAMINO_W, n / TETRAMINO_W);
             t[i++] = p - center;
@@ -149,15 +156,23 @@ public:
 
     void rotateCW() 
     { 
+        if(current == 6) return; // если тетраминошка - квадрат
         for(auto& v : t) 
             rotateCW_90(v);
-        if(checkCollision()) rotateCCW();
+
+        if(checkCollision())
+            for(auto& v : t) 
+                rotateCCW_90(v);
     }
     void rotateCCW() 
     { 
+        if(current == 6) return; // если тетраминошка - квадрат
         for(auto& v : t) 
             rotateCCW_90(v); 
-        if(checkCollision()) rotateCW();
+
+        if(checkCollision())
+            for(auto& v : t) 
+                rotateCW_90(v);
     }
 
     bool checkCollision()
