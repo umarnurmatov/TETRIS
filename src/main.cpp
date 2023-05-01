@@ -18,6 +18,9 @@
 #define TETRAMINO_W 2
 #define TETRAMINO_H 4
 
+#define DELAY 0.5f
+#define DELAY_FAST 0.1f
+
 #define EMPTY_COLOR sf::Color::Black
 
 using std::cout, std::endl;
@@ -55,6 +58,7 @@ class Tetramino
         { {1,3,5,7}, {2,4,5,7}, {3,4,5,6}, {3,4,5,7}, {2,3,5,7}, {3,5,6,7}, {2,3,4,5} } 
     };
 
+    // xi, yi - центр вращения для i тетрамино
     std::array<std::array<int, 2>, 7> centers
     {
         { {1,1}, {0,2}, {0,2}, {1,2}, {1,2}, {1,2}, {1,2} }
@@ -64,6 +68,8 @@ class Tetramino
     {
         { sf::Color::Green, sf::Color::Blue, sf::Color::Red, sf::Color::Magenta, sf::Color::Cyan, sf::Color::Yellow, {121, 240, 15} }
     };
+
+    int XYtoSerial(int x, int y) { return y * GRID_W + x; }
 
     std::array<sf::Vector2i, 4> t;
     void rotateCW_90(sf::Vector2i& v) { v = sf::Vector2i(v.y, -v.x); }
@@ -78,8 +84,7 @@ class Tetramino
     
 public:
     Tetramino()
-        : uid(0, 6),
-          tpos(GRID_W / 2, TETRAMINO_H / 2)
+        : uid(0, 6)
     {
         auto seed = std::chrono::system_clock::now().time_since_epoch().count();
         rd.seed(seed);
@@ -89,7 +94,6 @@ public:
 
         clearGridAll();
         setupRenderGrid();
-        
     }
 
     void setupRenderGrid()
@@ -122,6 +126,8 @@ public:
 
     void genTetramino()
     {
+        tpos = {GRID_W / 2, TETRAMINO_H / 2};
+
         current_col = next_col;
         current = next;
 
@@ -136,22 +142,15 @@ public:
         next_col = uid(rd);
     }
 
-    void update()
-    {
-        //tpos.y += 1;
-        clearGrid();
-        for(auto& v : t)
-        {   
-            sf::Vector2i p = v + tpos;
-            grid[p.y * GRID_W + p.x].type = SquareType::FALLING;
-            grid[p.y * GRID_W + p.x].color = colors[current_col];
-        }
-    }
-
-    void move(int x)
+    void moveX(int x)
     {
         tpos.x += x;
         if(checkCollision()) tpos.x -= x;
+    }
+
+    void moveY()
+    {
+        tpos.y += 1;
     }
 
     void rotateCW() 
@@ -186,6 +185,43 @@ public:
         return false;
     }
 
+    bool checkBottom()
+    {
+        for(auto& v : t)
+        {
+            sf::Vector2i p = v + tpos;
+            if(p.y == GRID_H-1 || grid[XYtoSerial(p.x, p.y+1)].type == SquareType::FALLEN)
+                return true;
+        }
+        return false;
+    }
+
+    void update()
+    {
+        //tpos.y += 1;
+        clearGrid();
+        if(checkBottom())
+        {
+            for(auto& v : t)
+            {   
+                sf::Vector2i p = v + tpos;
+                grid[XYtoSerial(p.x, p.y)].type = SquareType::FALLEN;
+                grid[XYtoSerial(p.x, p.y)].color = colors[current_col];
+            }
+
+            genTetramino();
+        }
+        else
+        {
+            for(auto& v : t)
+            {   
+                sf::Vector2i p = v + tpos;
+                grid[XYtoSerial(p.x, p.y)].type = SquareType::FALLING;
+                grid[XYtoSerial(p.x, p.y)].color = colors[current_col];
+            }
+        }
+    }
+
     void render(sf::RenderWindow &w)
     {
         for(size_t i = 0; i < grid.size(); i++)
@@ -199,11 +235,15 @@ public:
 class Tetris
 {
     Tetramino t;
+    sf::Clock clk;
+    float delay;
 public:
     Tetris()
+        : delay{DELAY}
     {
         t.genTetramino();
         t.update();
+        clk.restart();
     }
 
     void processEvent(sf::Event& event)
@@ -214,24 +254,39 @@ public:
             switch(event.key.code)
             {
             case sf::Keyboard::A:
-                t.move(-1);
+                t.moveX(-1);
                 break;
             case sf::Keyboard::D:
-                t.move(1);
+                t.moveX(1);
                 break;
             case sf::Keyboard::W:
                 t.rotateCW();
                 break;  
             case sf::Keyboard::S:
                 t.rotateCCW();
-                break;  
+                break;
+            case sf::Keyboard::E:
+                delay = DELAY_FAST;
+                break;
             }
             break;
+        case sf::Event::KeyReleased:
+            switch(event.key.code)
+            {
+            case sf::Keyboard::E:
+                delay = DELAY;
+                break;
+            }
         }
     }
 
     void render(sf::RenderWindow &window)
     {
+        if(clk.getElapsedTime().asSeconds() >= delay)
+        {
+            t.moveY();
+            clk.restart();
+        }
         t.update();
         t.render(window);
     }
