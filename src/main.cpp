@@ -10,10 +10,11 @@
 #define GRID_H 20
 #define GRID_W 10
 
-#define WINDOW_H 600
+#define WINDOW_H 800
 #define WINDOW_W WINDOW_H * GRID_W / GRID_H
 
 #define SQUARE_A WINDOW_H / GRID_H
+#define OUTLINE 5.f
 
 #define TETRAMINO_W 2
 #define TETRAMINO_H 4
@@ -22,6 +23,7 @@
 #define DELAY_FAST 0.1f
 
 #define EMPTY_COLOR sf::Color::Black
+#define OUTLINE_COLOR sf::Color::White
 
 using std::cout, std::endl;
 
@@ -89,19 +91,26 @@ public:
         auto seed = std::chrono::system_clock::now().time_since_epoch().count();
         rd.seed(seed);
 
-        next = uid(rd);
-        next_col = uid(rd);
-
+        
+        getNext();
         clearGridAll();
         setupRenderGrid();
+    }
+
+    void getNext()
+    {
+        next = rd()%7;
+        next_col = rd()%7;
     }
 
     void setupRenderGrid()
     {
         for(size_t i = 0; i < GRID_H*GRID_W; i++)
         {
-            render_grid[i].setSize(sf::Vector2f(SQUARE_A - 5, SQUARE_A - 5));
-            render_grid[i].setPosition(sf::Vector2f(SQUARE_A*(i % GRID_W), SQUARE_A*floor(i / GRID_W)));
+            render_grid[i].setSize(sf::Vector2f(SQUARE_A-OUTLINE, SQUARE_A-OUTLINE));
+            render_grid[i].setOutlineThickness(OUTLINE);
+            render_grid[i].setOutlineColor(OUTLINE_COLOR);
+            render_grid[i].setPosition(sf::Vector2f(SQUARE_A*(i % GRID_W)+OUTLINE/2.f, SQUARE_A*floor(i / GRID_W)+OUTLINE/2.f));
         }
     }
 
@@ -138,8 +147,7 @@ public:
             t[i++] = p - center;
         }
 
-        next = uid(rd);
-        next_col = uid(rd);
+        getNext();
     }
 
     void moveX(int x)
