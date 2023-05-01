@@ -22,7 +22,7 @@
 #define DELAY 0.5f
 #define DELAY_FAST 0.1f
 
-#define EMPTY_COLOR sf::Color::Black
+#define EMPTY_COLOR sf::Color::White
 #define OUTLINE_COLOR sf::Color::White
 
 using std::cout, std::endl;
@@ -204,10 +204,39 @@ public:
         return false;
     }
 
+    int checkLine()
+    {
+        bool is_line;
+        int line_count = 0;
+        for(int y = 0; y < GRID_H; y++)
+        {
+            is_line = true;
+            for(int x = 0; x < GRID_W; x++)
+                if(grid[XYtoSerial(x, y)].type == SquareType::EMPTY)
+                    is_line = false;
+            
+            if(is_line)
+            {
+                line_count++;
+                for(int yy = y; yy > 0; yy--)
+                    for(int xx = 0; xx < GRID_W; xx++)
+                    {
+                        grid[XYtoSerial(xx, yy)].color = grid[XYtoSerial(xx, yy-1)].color;
+                        if(grid[XYtoSerial(xx, yy-1)].type != SquareType::FALLING)
+                            grid[XYtoSerial(xx, yy)].type = grid[XYtoSerial(xx, yy-1)].type;
+                    }
+            }
+        }
+
+        return line_count;
+    }
+
     void update()
     {
-        //tpos.y += 1;
+        checkLine();
+
         clearGrid();
+
         if(checkBottom())
         {
             for(auto& v : t)
@@ -245,6 +274,7 @@ class Tetris
     Tetramino t;
     sf::Clock clk;
     float delay;
+
 public:
     Tetris()
         : delay{DELAY}
