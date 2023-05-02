@@ -17,7 +17,7 @@ int main() {
     bool imgui_sfml_init = ImGui::SFML::Init(window);
     sf::View view;
 
-    Tetris t; 
+    Tetris t(window); 
 
     sf::Clock deltaClock;
     
@@ -53,7 +53,7 @@ int main() {
         t.step();
 
         window.clear();
-        t.render(window);
+        t.render();
         ImGui::SFML::Render(window);
         window.display();
     }

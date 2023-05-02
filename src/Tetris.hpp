@@ -44,5 +44,4 @@ private:
     //////////////////// РЕНДЕР /////////////////////
 
     sf::RenderWindow &m_window;
-    void m_renderPreview();
 };

@@ -74,7 +74,11 @@ public:
 
     //////////////////// РЕНДЕР //////////////////// 
 
-    void render(sf::RenderWindow &w);  
+    void render(sf::RenderWindow &w);
+
+    /// @brief рендерит превью следующего тетрамино
+    /// @param position позиция центра превью тетрамино на экране
+    void renderPreview(sf::RenderWindow &w, sf::Vector2f position);
 
 private:
     //////////////////// ЛОГИКА ////////////////////
@@ -129,4 +133,5 @@ private:
     std::array<sf::RectangleShape, SQUARE_PER_TETRAMINO> m_render_preview;
 
     void m_setupRenderGrid();
+    void m_setupRenderPreview(sf::Vector2f position, sf::Vector2f squareSize = {SQUARE_A, SQUARE_A});
 };

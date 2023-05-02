@@ -67,9 +67,5 @@ void Tetris::step()
 void Tetris::render()
 {
     m_t.render(m_window);
-}
-
-void Tetris::m_renderPreview()
-{
-
+    m_t.renderPreview(m_window, {500, 600});
 }
