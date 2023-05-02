@@ -4,7 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "bits/stdc++.h"
 
 #include "Tetris.hpp"
 
@@ -52,7 +51,7 @@ int main() {
         ImGui::End();
         
         t.step();
-        
+
         window.clear();
         t.render(window);
         ImGui::SFML::Render(window);

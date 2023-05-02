@@ -1,5 +1,14 @@
 #include "Tetris.hpp"
 
+Tetris::Tetris()
+    : delay{DELAY}
+{
+    t.genTetramino();
+    t.update();
+    clk.restart();
+    audio.playMain();
+}
+
 void Tetris::processEvent(sf::Event& event)
 {
     switch(event.type)

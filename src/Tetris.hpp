@@ -14,26 +14,30 @@
 
 class Tetris
 {
-    Tetramino t;
-    sf::Clock clk;
-    float delay;
-    Audio audio;
-
 public:
-    Tetris()
-        : delay{DELAY}
-    {
-        t.genTetramino();
-        t.update();
-        clk.restart();
-        audio.playMain();
-    }
+    Tetris();
+
+    //////////////////// ИВЕНТЫ /////////////////////
 
     void processEvent(sf::Event& event);
+
+    //////////////////// ТЕТРИС /////////////////////
 
     /// @brief <по пробелу> тетрамино сразу падает вниз
     void immediateFall();
     void step();
 
+    //////////////////// РЕНДЕР /////////////////////
     void render(sf::RenderWindow &window);
+
+private:
+    //////////////////// ТЕТРИС /////////////////////
+
+    Tetramino t;
+    sf::Clock clk;
+    float delay;
+
+    ////////////////////  ЗВУК  /////////////////////
+
+    Audio audio;
 };

@@ -38,7 +38,50 @@ struct Square
 };
 
 class Tetramino
-{
+{   
+public:
+    Tetramino();
+
+    //////////////////// ЛОГИКА //////////////////// 
+
+    void getNext();
+
+    void setupRenderGrid();
+
+    /// @brief grid[i] = EMPTY if grid[i] is not FALLEN
+    void clearGrid();
+
+    /// @brief grid[i] = EMPTY
+    void clearGridAll();
+
+    void genTetramino();
+
+    void moveX(int x);
+    void moveY();
+
+    void rotateCW();
+    void rotateCCW();
+
+    bool checkCollision();
+
+    /// @brief проверяет не упала ли тетрамино на дно / другие тетрамино
+    ///        если упала, то генерирует новую тетрамино
+    /// @return true если упала / false если нет
+    bool checkBottom();
+
+    /// @brief проверяет не заполнена ли какая-то линия; сразу удаляет заполненную
+    /// @return количество удаленных линий
+    int checkLine();
+
+    void update();
+
+    //////////////////// РЕНДЕР //////////////////// 
+
+    void render(sf::RenderWindow &w);  
+
+private:
+    //////////////////// ЛОГИКА ////////////////////
+
     sf::Vector2i tpos;
     std::array<Square, GRID_W*GRID_H> grid;
 
@@ -78,41 +121,8 @@ class Tetramino
     std::uniform_int_distribution<> uid;
     int rnd_not_same_as_x(int x) { int temp = x; while(temp==x) temp = rd()%7; return temp; }
 
-    //////////
+    //////////////////// РЕНДЕР ////////////////////
+
     std::array<sf::RectangleShape, GRID_H*GRID_H> render_grid;
-    //////////
     
-public:
-    Tetramino();
-
-    void getNext();
-
-    void setupRenderGrid();
-
-    void clearGrid();
-
-    void clearGridAll();
-
-    void genTetramino();
-
-    void moveX(int x);
-    void moveY();
-
-    void rotateCW();
-    void rotateCCW();
-
-    bool checkCollision();
-
-    /// @brief проверяет не упала ли тетрамино на дно / другие тетрамино
-    ///        если упала, то генерирует новую тетрамино
-    /// @return true если упала / false если нет
-    bool checkBottom();
-
-    /// @brief проверяет не заполнена ли какая-то линия; сразу удаляет заполненную
-    /// @return количество удаленных линий
-    int checkLine();
-
-    void update();
-
-    void render(sf::RenderWindow &w);  
 };
