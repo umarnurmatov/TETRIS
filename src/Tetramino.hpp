@@ -85,49 +85,49 @@ public:
 private:
     //////////////////// ЛОГИКА ////////////////////
 
-    sf::Vector2i tpos;
-    std::array<Square, GRID_W*GRID_H> grid;
+    sf::Vector2i m_tpos;
+    std::array<Square, GRID_W*GRID_H> m_grid;
 
-    int current;
-    int next;
-    int current_col;
-    int next_col;
+    int m_current;
+    int m_next;
+    int m_current_col;
+    int m_next_col;
     
     /* -----
        |0|1|
        -----
        |2|3|
        ----- */
-    std::array<std::array<int, SQUARE_PER_TETRAMINO>, TETRAMINO_COUNT> tetramino
+    std::array<std::array<int, SQUARE_PER_TETRAMINO>, TETRAMINO_COUNT> m_tetramino
     { 
         { {1,3,5,7}, {2,4,5,7}, {3,4,5,6}, {3,4,5,7}, {2,3,5,7}, {3,5,6,7}, {2,3,4,5} } 
     };
 
     // xi, yi - центр вращения для i tetramino
-    std::array<std::array<int, 2>, TETRAMINO_COUNT> centers
+    std::array<std::array<int, 2>, TETRAMINO_COUNT> m_centers
     {
         { {1,1}, {0,2}, {0,2}, {1,2}, {1,2}, {1,2}, {1,2} }
     };
 
-    std::array<sf::Color, TETRAMINO_COUNT> colors
+    std::array<sf::Color, TETRAMINO_COUNT> m_colors
     {
         { sf::Color::Green, sf::Color::Blue, sf::Color::Red, sf::Color::Magenta, sf::Color::Cyan, sf::Color::Yellow, {121, 240, 15} }
     };
 
     int XYtoSerial(int x, int y) { return y * GRID_W + x; }
 
-    std::array<sf::Vector2i, SQUARE_PER_TETRAMINO> t, t_next;
+    std::array<sf::Vector2i, SQUARE_PER_TETRAMINO> m_t, m_t_next;
     void rotateCW_90(sf::Vector2i& v) { v = sf::Vector2i(v.y, -v.x); }
     void rotateCCW_90(sf::Vector2i& v) { v = sf::Vector2i(-v.y, v.x); }
 
     void initTetramino(std::array<sf::Vector2i, SQUARE_PER_TETRAMINO>& t, int& number);
 
-    std::minstd_rand rd;
-    std::uniform_int_distribution<> uid;
-    int rnd_not_same_as_x(int x) { int temp = x; while(temp==x) temp = rd()%TETRAMINO_COUNT; return temp; }
+    std::minstd_rand m_rd;
+    std::uniform_int_distribution<> m_uid;
+    int rnd_not_same_as_x(int x) { int temp = x; while(temp==x) temp = m_rd()%TETRAMINO_COUNT; return temp; }
 
     //////////////////// РЕНДЕР ////////////////////
 
-    std::array<sf::RectangleShape, GRID_H*GRID_H> render_grid;
-    std::array<sf::RectangleShape, SQUARE_PER_TETRAMINO> render_preview;
+    std::array<sf::RectangleShape, GRID_H*GRID_H> m_render_grid;
+    std::array<sf::RectangleShape, SQUARE_PER_TETRAMINO> m_render_preview;
 };
