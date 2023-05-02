@@ -103,14 +103,14 @@ bool Tetramino::checkCollision()
     {
         sf::Vector2i p = v + tpos;
         if(p.x < 0 || p.x > GRID_W-1 || p.y<0 || p.y>GRID_H-1 ||
-            grid[XYtoSerial(p.x, p.y)].type == FALLEN)
+           grid[XYtoSerial(p.x, p.y)].type == FALLEN)
 
             return true;
     }
     return false;
 }
 
-void Tetramino::checkBottom()
+bool Tetramino::checkBottom()
 {
     bool bottom = false;
     for(auto& v : t)
@@ -134,6 +134,8 @@ void Tetramino::checkBottom()
 
         genTetramino();
     }
+
+    return bottom;
 }
 
 int Tetramino::checkLine()

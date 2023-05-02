@@ -51,7 +51,8 @@ int main() {
         
         ImGui::End();
         
-
+        t.step();
+        
         window.clear();
         t.render(window);
         ImGui::SFML::Render(window);

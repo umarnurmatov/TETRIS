@@ -19,25 +19,15 @@ class Audio
         "res/audio/Tetris-Classic-Theme.flac"
     };
 
-    int mainAudio_Current = 0;
+    int mainAudio_Current;
 
 public:
-    Audio()
-    {
-        for(int i = 0; auto& s : mainAudio_Files)
-            if(!mainAudio[i].openFromFile(Utils::getFilePath(s)))
-                std::cerr << "Failed opening music\n";
-            else
-                mainAudio[i++].setLoop(true);
-    }
+    Audio();
 
-    void playMain()
-    {
-        mainAudio[mainAudio_Current].play();
-    }
+    void playMain();
+    void pauseMain();
 
-    void pauseMain()
-    {
-        mainAudio[mainAudio_Current].pause();
-    }
+    /// @param num порядковый номер основной темы
+    /// @return если переключилось, true
+    bool switchMain(int num);
 };

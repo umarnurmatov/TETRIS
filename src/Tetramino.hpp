@@ -19,9 +19,6 @@
 #define TETRAMINO_W 2
 #define TETRAMINO_H 4
 
-#define DELAY 0.5f
-#define DELAY_FAST 0.1f
-
 #define EMPTY_COLOR sf::Color::White
 #define OUTLINE_COLOR sf::Color::White
 
@@ -60,7 +57,7 @@ class Tetramino
         { {1,3,5,7}, {2,4,5,7}, {3,4,5,6}, {3,4,5,7}, {2,3,5,7}, {3,5,6,7}, {2,3,4,5} } 
     };
 
-    // xi, yi - центр вращения для i тетрамино
+    // xi, yi - центр вращения для i tetramino
     std::array<std::array<int, 2>, 7> centers
     {
         { {1,1}, {0,2}, {0,2}, {1,2}, {1,2}, {1,2}, {1,2} }
@@ -106,8 +103,13 @@ public:
 
     bool checkCollision();
 
-    void checkBottom();
+    /// @brief проверяет не упала ли тетрамино на дно / другие тетрамино
+    ///        если упала, то генерирует новую тетрамино
+    /// @return true если упала / false если нет
+    bool checkBottom();
 
+    /// @brief проверяет не заполнена ли какая-то линия; сразу удаляет заполненную
+    /// @return количество удаленных линий
     int checkLine();
 
     void update();

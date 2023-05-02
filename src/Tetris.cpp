@@ -22,6 +22,9 @@ void Tetris::processEvent(sf::Event& event)
         case sf::Keyboard::E:
             delay = DELAY_FAST;
             break;
+        case sf::Keyboard::Space:
+            immediateFall();
+            break;
         }
         break;
     case sf::Event::KeyReleased:
@@ -34,7 +37,13 @@ void Tetris::processEvent(sf::Event& event)
     }
 }
 
-void Tetris::render(sf::RenderWindow &window)
+void Tetris::immediateFall()
+{
+    while(!t.checkBottom())
+        t.moveY();
+}
+
+void Tetris::step()
 {
     if(clk.getElapsedTime().asSeconds() >= delay)
     {
@@ -43,5 +52,9 @@ void Tetris::render(sf::RenderWindow &window)
         clk.restart();
     }
     t.update();
+}
+
+void Tetris::render(sf::RenderWindow &window)
+{
     t.render(window);
 }
