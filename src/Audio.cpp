@@ -1,23 +1,23 @@
 #include "Audio.hpp"
 
 Audio::Audio()
-    : mainAudio_Current{0}
+    : m_mainAudio_Current{0}
 {
-    for(int i = 0; auto& s : mainAudio_Files)
-        if(!mainAudio[i].openFromFile(Utils::getFilePath(s)))
+    for(int i = 0; auto& s : m_mainAudio_Files)
+        if(!m_mainAudio[i].openFromFile(Utils::getFilePath(s)))
             std::cerr << "Failed opening music\n";
         else
-            mainAudio[i++].setLoop(true);
+            m_mainAudio[i++].setLoop(true);
 }
 
 void Audio::playMain()
 {
-    mainAudio[mainAudio_Current].play();
+    m_mainAudio[m_mainAudio_Current].play();
 }
 
 void Audio::pauseMain()
 {
-    mainAudio[mainAudio_Current].pause();
+    m_mainAudio[m_mainAudio_Current].pause();
 }
 
 /// @param num порядковый номер основной темы
@@ -28,9 +28,9 @@ bool Audio::switchMain(int num)
         return false;
     else
     {
-        mainAudio[mainAudio_Current].stop();
-        mainAudio_Current = num;
-        mainAudio[mainAudio_Current].play();
+        m_mainAudio[m_mainAudio_Current].stop();
+        m_mainAudio_Current = num;
+        m_mainAudio[m_mainAudio_Current].play();
         return true;
     }
 }
