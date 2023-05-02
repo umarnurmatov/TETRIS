@@ -1,4 +1,4 @@
-#include "Tetramino.h"
+#include "Tetramino.hpp"
 
 Tetramino::Tetramino()
     : uid{0, 6}

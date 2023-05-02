@@ -6,9 +6,7 @@
 
 #include "bits/stdc++.h"
 
-#include "Tetris.h"
-
-
+#include "Tetris.hpp"
 
 
 int main() {
