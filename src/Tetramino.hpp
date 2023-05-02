@@ -70,7 +70,10 @@ public:
     /// @return количество удаленных линий
     int checkLine();
 
+    bool isGameEnd() { return m_isGameEnd; }
+
     void update();
+    
 
     //////////////////// РЕНДЕР //////////////////// 
 
@@ -126,6 +129,8 @@ private:
     int m_rnd_not_same_as_x(int x) { int temp = x; while(temp==x) temp = m_rd()%TETRAMINO_COUNT; return temp; }
 
     bool m_checkCollision();
+
+    bool m_isGameEnd;
 
     //////////////////// РЕНДЕР ////////////////////
 

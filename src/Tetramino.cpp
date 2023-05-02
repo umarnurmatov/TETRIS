@@ -1,7 +1,8 @@
 #include "Tetramino.hpp"
 
 Tetramino::Tetramino()
-    : m_uid{0, 6}
+    : m_uid{0, 6},
+      m_isGameEnd{false}
 {
     auto seed = std::chrono::system_clock::now().time_since_epoch().count();
     m_rd.seed(seed);
@@ -69,6 +70,8 @@ void Tetramino::genTetramino()
 
     m_getNext();
     m_initTetramino(m_t_next, m_next);
+
+    if(m_checkCollision()) m_isGameEnd = true;
 }
 
 void Tetramino::m_initTetramino(std::array<sf::Vector2i, 4>& m_t, int& number)

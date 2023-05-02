@@ -49,19 +49,23 @@ void Tetris::processEvent(sf::Event& event)
 
 void Tetris::immediateFall()
 {
-    while(!m_t.checkBottom())
-        m_t.moveY();
+    if(!m_t.isGameEnd())
+        while(!m_t.checkBottom())
+            m_t.moveY();
 }
 
 void Tetris::step()
 {
-    if(m_clk.getElapsedTime().asSeconds() >= m_delay)
+    if(!m_t.isGameEnd())
     {
-        m_t.checkBottom();
-        m_t.moveY();
-        m_clk.restart();
+        if(m_clk.getElapsedTime().asSeconds() >= m_delay)
+        {
+            m_t.checkBottom();
+            m_t.moveY();
+            m_clk.restart();
+        }
+        m_t.update();
     }
-    m_t.update();
 }
 
 void Tetris::render()
