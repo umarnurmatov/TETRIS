@@ -22,6 +22,9 @@
 #define EMPTY_COLOR sf::Color::White
 #define OUTLINE_COLOR sf::Color::White
 
+#define SQUARE_PER_TETRAMINO 4
+#define TETRAMINO_COUNT 7
+
 using std::cout, std::endl;
 
 enum SquareType
@@ -95,34 +98,36 @@ private:
        -----
        |2|3|
        ----- */
-    std::array<std::array<int, 4>, 7> tetramino
+    std::array<std::array<int, SQUARE_PER_TETRAMINO>, TETRAMINO_COUNT> tetramino
     { 
         { {1,3,5,7}, {2,4,5,7}, {3,4,5,6}, {3,4,5,7}, {2,3,5,7}, {3,5,6,7}, {2,3,4,5} } 
     };
 
     // xi, yi - центр вращения для i tetramino
-    std::array<std::array<int, 2>, 7> centers
+    std::array<std::array<int, 2>, TETRAMINO_COUNT> centers
     {
         { {1,1}, {0,2}, {0,2}, {1,2}, {1,2}, {1,2}, {1,2} }
     };
 
-    std::array<sf::Color, 7> colors
+    std::array<sf::Color, TETRAMINO_COUNT> colors
     {
         { sf::Color::Green, sf::Color::Blue, sf::Color::Red, sf::Color::Magenta, sf::Color::Cyan, sf::Color::Yellow, {121, 240, 15} }
     };
 
     int XYtoSerial(int x, int y) { return y * GRID_W + x; }
 
-    std::array<sf::Vector2i, 4> t;
+    std::array<sf::Vector2i, SQUARE_PER_TETRAMINO> t, t_next;
     void rotateCW_90(sf::Vector2i& v) { v = sf::Vector2i(v.y, -v.x); }
     void rotateCCW_90(sf::Vector2i& v) { v = sf::Vector2i(-v.y, v.x); }
 
+    void initTetramino(std::array<sf::Vector2i, SQUARE_PER_TETRAMINO>& t, int& number);
+
     std::minstd_rand rd;
     std::uniform_int_distribution<> uid;
-    int rnd_not_same_as_x(int x) { int temp = x; while(temp==x) temp = rd()%7; return temp; }
+    int rnd_not_same_as_x(int x) { int temp = x; while(temp==x) temp = rd()%TETRAMINO_COUNT; return temp; }
 
     //////////////////// РЕНДЕР ////////////////////
 
     std::array<sf::RectangleShape, GRID_H*GRID_H> render_grid;
-    
+    std::array<sf::RectangleShape, SQUARE_PER_TETRAMINO> render_preview;
 };

@@ -6,16 +6,16 @@ Tetramino::Tetramino()
     auto seed = std::chrono::system_clock::now().time_since_epoch().count();
     rd.seed(seed);
 
-    
     getNext();
+    initTetramino(t_next, next);
     clearGridAll();
     setupRenderGrid();
 }
 
 void Tetramino::getNext()
 {
-    next = rd()%7;
-    next_col = rd()%7;
+    next = rd()%TETRAMINO_COUNT;
+    next_col = rd()%TETRAMINO_COUNT;
 }
 
 void Tetramino::setupRenderGrid()
@@ -54,15 +54,20 @@ void Tetramino::genTetramino()
 
     current_col = next_col;
     current = next;
+    t = t_next;
 
-    sf::Vector2i center(centers[current][0], centers[current][1]);
-    for(int i = 0; int& n : tetramino[current])
+    getNext();
+    initTetramino(t_next, next);
+}
+
+void Tetramino::initTetramino(std::array<sf::Vector2i, 4>& t, int& number)
+{
+    sf::Vector2i center(centers[number][0], centers[number][1]);
+    for(int i = 0; int& n : tetramino[number])
     {
         sf::Vector2i p(n % TETRAMINO_W, n / TETRAMINO_W);
         t[i++] = p - center;
     }
-
-    getNext();
 }
 
 void Tetramino::moveX(int x)
@@ -188,3 +193,4 @@ void Tetramino::render(sf::RenderWindow &w)
         w.draw(render_grid[i]);
     }
 }
+
