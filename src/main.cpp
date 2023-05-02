@@ -79,14 +79,15 @@ class Tetramino
 
     std::minstd_rand rd;
     std::uniform_int_distribution<> uid;
+    int rnd_not_same_as_x(int x) { int temp = x; while(temp==x) temp = rd()%7; return temp; }
 
     //////////
     std::array<sf::RectangleShape, GRID_H*GRID_H> render_grid;
-
+    //////////
     
 public:
     Tetramino()
-        : uid(0, 6)
+        : uid{0, 6}
     {
         auto seed = std::chrono::system_clock::now().time_since_epoch().count();
         rd.seed(seed);
@@ -187,21 +188,38 @@ public:
         for(auto& v : t)
         {
             sf::Vector2i p = v + tpos;
-            if(p.x < 0 || p.x > GRID_W-1 || p.y<0 || p.y>GRID_H-1)
+            if(p.x < 0 || p.x > GRID_W-1 || p.y<0 || p.y>GRID_H-1 ||
+                grid[XYtoSerial(p.x, p.y)].type == FALLEN)
+
                 return true;
         }
         return false;
     }
 
-    bool checkBottom()
+    void checkBottom()
     {
+        bool bottom = false;
         for(auto& v : t)
         {
             sf::Vector2i p = v + tpos;
             if(p.y == GRID_H-1 || grid[XYtoSerial(p.x, p.y+1)].type == SquareType::FALLEN)
-                return true;
+                {
+                    bottom = true;
+                    break;
+                }
         }
-        return false;
+
+        if(bottom)
+        {
+            for(auto& v : t)
+            {   
+                sf::Vector2i p = v + tpos;
+                grid[XYtoSerial(p.x, p.y)].type = SquareType::FALLEN;
+                grid[XYtoSerial(p.x, p.y)].color = colors[current_col];
+            }
+
+            genTetramino();
+        }
     }
 
     int checkLine()
@@ -212,7 +230,7 @@ public:
         {
             is_line = true;
             for(int x = 0; x < GRID_W; x++)
-                if(grid[XYtoSerial(x, y)].type == SquareType::EMPTY)
+                if(grid[XYtoSerial(x, y)].type == SquareType::EMPTY || grid[XYtoSerial(x, y)].type == SquareType::FALLING)
                     is_line = false;
             
             if(is_line)
@@ -237,26 +255,13 @@ public:
 
         clearGrid();
 
-        if(checkBottom())
-        {
-            for(auto& v : t)
-            {   
-                sf::Vector2i p = v + tpos;
-                grid[XYtoSerial(p.x, p.y)].type = SquareType::FALLEN;
-                grid[XYtoSerial(p.x, p.y)].color = colors[current_col];
-            }
+        for(auto& v : t)
+        {   
+            sf::Vector2i p = v + tpos;
+            grid[XYtoSerial(p.x, p.y)].type = SquareType::FALLING;
+            grid[XYtoSerial(p.x, p.y)].color = colors[current_col];
+        }
 
-            genTetramino();
-        }
-        else
-        {
-            for(auto& v : t)
-            {   
-                sf::Vector2i p = v + tpos;
-                grid[XYtoSerial(p.x, p.y)].type = SquareType::FALLING;
-                grid[XYtoSerial(p.x, p.y)].color = colors[current_col];
-            }
-        }
     }
 
     void render(sf::RenderWindow &w)
@@ -322,6 +327,7 @@ public:
     {
         if(clk.getElapsedTime().asSeconds() >= delay)
         {
+            t.checkBottom();
             t.moveY();
             clk.restart();
         }
@@ -333,9 +339,11 @@ public:
 int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
-    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(WINDOW_W, WINDOW_H)), "Tetris", sf::Style::Default, settings);
+    sf::VideoMode vm(sf::Vector2u(WINDOW_W+400, WINDOW_H));
+    sf::RenderWindow window(vm, "Tetris", sf::Style::Default ^ sf::Style::Resize, settings);
     window.setFramerateLimit(60);
     bool imgui_sfml_init = ImGui::SFML::Init(window);
+    sf::View view;
 
     Tetris t; 
 
@@ -350,11 +358,25 @@ int main() {
                 window.close();
             }
 
+            if(event.type == sf::Event::Resized)
+            {
+                view = window.getDefaultView();
+                view.setSize({event.size.width, event.size.height});
+                window.setView(view);
+            }
+
             t.processEvent(event);
             //sf::Vector2f mouse_pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
         }
 
         ImGui::SFML::Update(window, deltaClock.restart());
+
+        ImGui::Begin("Hi", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+        ImGui::Text("Hi");
+        ImGui::SetWindowSize(ImVec2(400, WINDOW_H/2));
+        ImGui::SetWindowPos(ImVec2(WINDOW_W + OUTLINE, 0));
+        
+        ImGui::End();
         
 
         window.clear();
