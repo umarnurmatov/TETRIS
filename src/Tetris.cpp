@@ -1,12 +1,13 @@
 #include "Tetris.hpp"
 
-Tetris::Tetris()
-    : delay{DELAY}
+Tetris::Tetris(sf::RenderWindow& window)
+    : m_delay{DELAY},
+      m_window{window}
 {
-    t.genTetramino();
-    t.update();
-    clk.restart();
-    audio.playMain();
+    m_t.genTetramino();
+    m_t.update();
+    m_clk.restart();
+    m_audio.playMain();
 }
 
 void Tetris::processEvent(sf::Event& event)
@@ -17,19 +18,19 @@ void Tetris::processEvent(sf::Event& event)
         switch(event.key.code)
         {
         case sf::Keyboard::A:
-            t.moveX(-1);
+            m_t.moveX(-1);
             break;
         case sf::Keyboard::D:
-            t.moveX(1);
+            m_t.moveX(1);
             break;
         case sf::Keyboard::W:
-            t.rotateCW();
+            m_t.rotateCW();
             break;  
         case sf::Keyboard::S:
-            t.rotateCCW();
+            m_t.rotateCCW();
             break;
         case sf::Keyboard::E:
-            delay = DELAY_FAST;
+            m_delay = DELAY_FAST;
             break;
         case sf::Keyboard::Space:
             immediateFall();
@@ -40,7 +41,7 @@ void Tetris::processEvent(sf::Event& event)
         switch(event.key.code)
         {
         case sf::Keyboard::E:
-            delay = DELAY;
+            m_delay = DELAY;
             break;
         }
     }
@@ -48,22 +49,27 @@ void Tetris::processEvent(sf::Event& event)
 
 void Tetris::immediateFall()
 {
-    while(!t.checkBottom())
-        t.moveY();
+    while(!m_t.checkBottom())
+        m_t.moveY();
 }
 
 void Tetris::step()
 {
-    if(clk.getElapsedTime().asSeconds() >= delay)
+    if(m_clk.getElapsedTime().asSeconds() >= m_delay)
     {
-        t.checkBottom();
-        t.moveY();
-        clk.restart();
+        m_t.checkBottom();
+        m_t.moveY();
+        m_clk.restart();
     }
-    t.update();
+    m_t.update();
 }
 
-void Tetris::render(sf::RenderWindow &window)
+void Tetris::render()
 {
-    t.render(window);
+    m_t.render(m_window);
+}
+
+void Tetris::m_renderPreview()
+{
+
 }

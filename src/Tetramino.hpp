@@ -47,10 +47,6 @@ public:
 
     //////////////////// ЛОГИКА //////////////////// 
 
-    void getNext();
-
-    void setupRenderGrid();
-
     /// @brief grid[i] = EMPTY if grid[i] is not FALLEN
     void clearGrid();
 
@@ -63,9 +59,7 @@ public:
     void moveY();
 
     void rotateCW();
-    void rotateCCW();
-
-    bool checkCollision();
+    void rotateCCW();    
 
     /// @brief проверяет не упала ли тетрамино на дно / другие тетрамино
     ///        если упала, то генерирует новую тетрамино
@@ -114,20 +108,25 @@ private:
         { sf::Color::Green, sf::Color::Blue, sf::Color::Red, sf::Color::Magenta, sf::Color::Cyan, sf::Color::Yellow, {121, 240, 15} }
     };
 
-    int XYtoSerial(int x, int y) { return y * GRID_W + x; }
+    int m_XYtoSerial(int x, int y) { return y * GRID_W + x; }
 
     std::array<sf::Vector2i, SQUARE_PER_TETRAMINO> m_t, m_t_next;
-    void rotateCW_90(sf::Vector2i& v) { v = sf::Vector2i(v.y, -v.x); }
-    void rotateCCW_90(sf::Vector2i& v) { v = sf::Vector2i(-v.y, v.x); }
+    void m_rotateCW_90(sf::Vector2i& v) { v = sf::Vector2i(v.y, -v.x); }
+    void m_rotateCCW_90(sf::Vector2i& v) { v = sf::Vector2i(-v.y, v.x); }
 
-    void initTetramino(std::array<sf::Vector2i, SQUARE_PER_TETRAMINO>& t, int& number);
+    void m_getNext();
+    void m_initTetramino(std::array<sf::Vector2i, SQUARE_PER_TETRAMINO>& t, int& number);
 
     std::minstd_rand m_rd;
     std::uniform_int_distribution<> m_uid;
-    int rnd_not_same_as_x(int x) { int temp = x; while(temp==x) temp = m_rd()%TETRAMINO_COUNT; return temp; }
+    int m_rnd_not_same_as_x(int x) { int temp = x; while(temp==x) temp = m_rd()%TETRAMINO_COUNT; return temp; }
+
+    bool m_checkCollision();
 
     //////////////////// РЕНДЕР ////////////////////
 
     std::array<sf::RectangleShape, GRID_H*GRID_H> m_render_grid;
     std::array<sf::RectangleShape, SQUARE_PER_TETRAMINO> m_render_preview;
+
+    void m_setupRenderGrid();
 };

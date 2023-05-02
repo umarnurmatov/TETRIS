@@ -15,7 +15,7 @@
 class Tetris
 {
 public:
-    Tetris();
+    Tetris(sf::RenderWindow& window);
 
     //////////////////// ИВЕНТЫ /////////////////////
 
@@ -28,16 +28,21 @@ public:
     void step();
 
     //////////////////// РЕНДЕР /////////////////////
-    void render(sf::RenderWindow &window);
+    void render();
 
 private:
     //////////////////// ТЕТРИС /////////////////////
 
-    Tetramino t;
-    sf::Clock clk;
-    float delay;
+    Tetramino m_t;
+    sf::Clock m_clk;
+    float m_delay;
 
     ////////////////////  ЗВУК  /////////////////////
 
-    Audio audio;
+    Audio m_audio;
+
+    //////////////////// РЕНДЕР /////////////////////
+
+    sf::RenderWindow &m_window;
+    void m_renderPreview();
 };
