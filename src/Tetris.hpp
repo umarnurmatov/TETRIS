@@ -8,9 +8,17 @@
 #include "Tetramino.hpp"
 #include "Audio.hpp"
 
-// в секундах
-#define DELAY 0.5f
-#define DELAY_FAST 0.1f
+// в мс
+#define DELAY_INIT 500.f
+#define DELAY_FAST_INIT 100.f
+#define DELAY_DELTA 50.f // вычитается из delay с каждым новым уровнем
+
+#define NEW_LEVEL_SCORE 1000
+
+#define LINE_1_SCORE 100
+#define LINE_2_SCORE 300
+#define LINE_3_SCORE 700
+#define LINE_4_SCORE 1500
 
 class Tetris
 {
@@ -33,10 +41,20 @@ private:
     //////////////////// ТЕТРИС /////////////////////
 
     Tetramino m_t;
+    
+    
+    int m_score;
+    int m_score_prev;
+    int m_lines;
+    int m_level;
+
     sf::Clock m_clk;
+    float m_current_delay;
     float m_delay;
-    int score;
-    int lines;
+    float m_fast_delay;
+
+    void m_genNextDelay();
+    void m_resetTetris();
 
     ////////////////////  ЗВУК  /////////////////////
 
@@ -50,7 +68,7 @@ private:
 
     sf::Vector2i M_SIDE_INTERFACE_SIZE;
     sf::Vector2i M_SIDE_INTERFACE_POS;
-    
+
     sf::Vector2i M_PREVIEW_SIZE;
     sf::Vector2i M_PREVIEW_CENTER_POS;
 

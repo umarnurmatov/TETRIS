@@ -1,10 +1,14 @@
 #include "Tetris.hpp"
 
 Tetris::Tetris(sf::RenderWindow& window)
-    : m_delay{DELAY},
+    : m_current_delay{DELAY_INIT},
+      m_delay{DELAY_INIT},
+      m_fast_delay{DELAY_FAST_INIT},
       m_window{window},
-      score{0},
-      lines{0}
+      m_score{0},
+      m_score_prev{0},
+      m_lines{0},
+      m_level{0}
 {
     m_t.genTetramino();
     sf::Vector2i wSize(window.getSize().x, window.getSize().y);
@@ -40,7 +44,7 @@ void Tetris::processEvent(sf::Event& event)
             m_t.rotateCCW();
             break;
         case sf::Keyboard::E:
-            m_delay = DELAY_FAST;
+            m_current_delay = m_fast_delay;
             break;
         case sf::Keyboard::Space:
             m_t.immediateFall();
@@ -51,24 +55,68 @@ void Tetris::processEvent(sf::Event& event)
         switch(event.key.code)
         {
         case sf::Keyboard::E:
-            m_delay = DELAY;
+            m_current_delay = m_delay;
             break;
         }
     }
+}
+
+void Tetris::m_genNextDelay()
+{
+    m_delay -= DELAY_DELTA;
+    m_fast_delay -= DELAY_DELTA;
+    m_current_delay = m_delay;
+}
+
+void Tetris::m_resetTetris()
+{
+    m_delay = DELAY_INIT;
+    m_fast_delay = DELAY_FAST_INIT;
+    m_lines = 0;
+    m_score = 0;
 }
 
 void Tetris::step()
 {
     if(!m_t.isGameEnd())
     {
-        if(m_clk.getElapsedTime().asSeconds() >= m_delay)
+        if(m_clk.getElapsedTime().asMilliseconds() >= m_current_delay)
         {
             m_t.step();
             m_clk.restart();
         }
-        int dLineCount = 0;
-        m_t.update(dLineCount);
-        lines += dLineCount;
+
+        int dLineCount = m_t.update();
+
+        m_lines += dLineCount;
+
+        switch(dLineCount)
+        {
+        case 1:
+            m_score += LINE_1_SCORE;
+            break;
+        case 2:
+            m_score += LINE_2_SCORE;
+            break;
+        case 3:
+            m_score += LINE_3_SCORE;
+            break;
+        case 4:
+            m_score += LINE_4_SCORE;
+            break;
+        }
+
+        if(m_score - m_score_prev >= NEW_LEVEL_SCORE)
+        {
+            m_score_prev = m_score;
+            m_level++;
+            m_genNextDelay();
+        }
+    }
+    else
+    {
+        m_resetTetris();
+        m_t.restart();
     }
 }
 
@@ -82,7 +130,9 @@ void Tetris::render()
 void Tetris::m_showGameInterface()
 {
     ImGui::Begin("Hi", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-    ImGui::Text("Lines: %d", lines);
+    ImGui::Text("Lines: %d", m_lines);
+    ImGui::Text("Score: %d", m_score);
+    ImGui::Text("Level: %d", m_level);
     ImGui::SetWindowSize(M_SIDE_INTERFACE_SIZE);
     ImGui::SetWindowPos(M_SIDE_INTERFACE_POS);
     

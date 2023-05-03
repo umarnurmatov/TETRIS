@@ -176,11 +176,11 @@ void Tetramino::step()
     m_moveY();
 }
 
-void Tetramino::update(int &lineCount)
+int Tetramino::update()
 {
-    if(m_isGameEnd) return;
+    if(m_isGameEnd) return 0;
 
-    lineCount = m_checkLine();
+    int lineCount = m_checkLine();
 
     m_clearGrid();
 
@@ -191,6 +191,14 @@ void Tetramino::update(int &lineCount)
         m_grid[m_XYtoSerial(p.x, p.y)].color = m_colors[m_current_col];
     }
 
+    return lineCount;
+}
+
+void Tetramino::restart()
+{
+    m_isGameEnd = false;
+    m_clearGridAll();
+    genTetramino();
 }
 
 void Tetramino::m_setupRenderGrid()
