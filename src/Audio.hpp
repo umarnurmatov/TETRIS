@@ -7,6 +7,16 @@
 #include "Utils.hpp"
 
 #define MAIN_AUDIO_COUNT 3
+#define GAME_SOUND_COUNT 5
+
+enum GAME_SOUNDS
+{
+    BEEP,
+    BOUNCE,
+    HIT,
+    PUNCH, 
+    ZAP  
+};
 
 class Audio
 {
@@ -19,6 +29,11 @@ public:
     /// @param num порядковый номер основной темы
     /// @return если переключилось, true
     bool switchMain(int num);
+
+    /// @param num порядковый номер основной темы
+    /// @return если переключилось, true
+    bool playSound(GAME_SOUNDS n);
+
 private:
     std::array<sf::Music, MAIN_AUDIO_COUNT> m_mainAudio;
     
@@ -30,4 +45,21 @@ private:
     };
 
     int m_mainAudio_Current;
+
+
+    ////////////////////////////////////
+
+
+    std::array<sf::SoundBuffer, GAME_SOUND_COUNT> m_gameAudio_Buffer;
+    std::array<sf::Sound, GAME_SOUND_COUNT> m_gameAudio;
+
+    std::array<std::string, GAME_SOUND_COUNT> m_gameAudio_Files = 
+    {
+        "res/audio/Beep.flac",
+        "res/audio/Bounce.flac",
+        "res/audio/Hit.flac",
+        "res/audio/Punch.flac",
+        "res/audio/Zap.flac"
+    };
+
 };

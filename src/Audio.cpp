@@ -1,13 +1,26 @@
 #include "Audio.hpp"
 
 Audio::Audio()
-    : m_mainAudio_Current{0}
+    : m_mainAudio_Current{1}
 {
     for(int i = 0; auto& s : m_mainAudio_Files)
+    {
         if(!m_mainAudio[i].openFromFile(Utils::getFilePath(s)))
-            std::cerr << "Failed opening music\n";
+            std::cerr << "Failed opening music " << s << "\n";
         else
             m_mainAudio[i++].setLoop(true);
+    }
+
+    for(int i = 0; auto& s : m_gameAudio_Files)
+    {
+        if(!m_gameAudio_Buffer[i++].loadFromFile(Utils::getFilePath(s)))
+            std::cerr << "Failed opening sound " << s << "\n";
+    }
+    
+    for(int i = 0; auto& b : m_gameAudio_Buffer)
+    {
+        m_gameAudio[i++].setBuffer(b);
+    }
 }
 
 void Audio::playMain()
@@ -24,7 +37,7 @@ void Audio::pauseMain()
 /// @return если переключилось, true
 bool Audio::switchMain(int num)
 {
-    if(num > MAIN_AUDIO_COUNT)
+    if(num > m_mainAudio.size()-1)
         return false;
     else
     {
@@ -33,4 +46,9 @@ bool Audio::switchMain(int num)
         m_mainAudio[m_mainAudio_Current].play();
         return true;
     }
+}
+
+bool Audio::playSound(GAME_SOUNDS n)
+{
+    m_gameAudio[static_cast<int>(n)].play();
 }

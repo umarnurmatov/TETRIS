@@ -48,6 +48,7 @@ void Tetris::processEvent(sf::Event& event)
             break;
         case sf::Keyboard::Space:
             m_t.immediateFall();
+            m_audio.playSound(GAME_SOUNDS::ZAP);
             break;
         }
         break;
