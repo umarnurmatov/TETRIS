@@ -47,33 +47,26 @@ public:
 
     //////////////////// ЛОГИКА //////////////////// 
 
-    /// @brief grid[i] = EMPTY if grid[i] is not FALLEN
-    void clearGrid();
-
-    /// @brief grid[i] = EMPTY
-    void clearGridAll();
-
     void genTetramino();
 
+    /// @brief двигает тетрамино по оси x
     void moveX(int x);
-    void moveY();
 
     void rotateCW();
-    void rotateCCW();    
+    void rotateCCW();
 
-    /// @brief проверяет не упала ли тетрамино на дно / другие тетрамино
-    ///        если упала, то генерирует новую тетрамино
-    /// @return true если упала / false если нет
-    bool checkBottom();
-
-    /// @brief проверяет не заполнена ли какая-то линия; сразу удаляет заполненную
-    /// @return количество удаленных линий
-    int checkLine();
+    /// @brief тетрамино сразу падает вниз
+    void immediateFall();
 
     bool isGameEnd() { return m_isGameEnd; }
 
-    void update();
-    
+    /// @brief двигает тетрамино вниз
+    void step();
+
+    /// @brief обновляет сетку (после moveX, rotateCW/CCW надо вызвать, чтобы применить изменения)
+    ///        проверяет линии
+    /// @param lineCount количество удаленных линий
+    void update(int &lineCount);
 
     //////////////////// РЕНДЕР //////////////////// 
 
@@ -131,6 +124,23 @@ private:
     bool m_checkCollision();
 
     bool m_isGameEnd;
+
+    /// @brief grid[i] = EMPTY if grid[i] is not FALLEN
+    void m_clearGrid();
+
+    /// @brief grid[i] = EMPTY
+    void m_clearGridAll();
+
+    /// @brief проверяет не упала ли тетрамино на дно / другие тетрамино
+    ///        если упала, то генерирует новую тетрамино
+    /// @return true если упала / false если нет
+    bool m_checkBottom();
+
+    /// @brief проверяет не заполнена ли какая-то линия; сразу удаляет заполненную
+    /// @return количество удаленных линий
+    int m_checkLine();
+
+    void m_moveY();
 
     //////////////////// РЕНДЕР ////////////////////
 

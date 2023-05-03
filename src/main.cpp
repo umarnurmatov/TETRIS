@@ -43,12 +43,7 @@ int main() {
 
         ImGui::SFML::Update(window, deltaClock.restart());
 
-        ImGui::Begin("Hi", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-        ImGui::Text("Hi");
-        ImGui::SetWindowSize(ImVec2(400, WINDOW_H/2));
-        ImGui::SetWindowPos(ImVec2(WINDOW_W + OUTLINE, 0));
-        
-        ImGui::End();
+
         
         t.step();
 

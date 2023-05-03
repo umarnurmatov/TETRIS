@@ -2,10 +2,11 @@
 
 Tetris::Tetris(sf::RenderWindow& window)
     : m_delay{DELAY},
-      m_window{window}
+      m_window{window},
+      score{0},
+      lines{0}
 {
     m_t.genTetramino();
-    m_t.update();
     m_clk.restart();
     m_audio.playMain();
 }
@@ -33,7 +34,7 @@ void Tetris::processEvent(sf::Event& event)
             m_delay = DELAY_FAST;
             break;
         case sf::Keyboard::Space:
-            immediateFall();
+            m_t.immediateFall();
             break;
         }
         break;
@@ -47,24 +48,18 @@ void Tetris::processEvent(sf::Event& event)
     }
 }
 
-void Tetris::immediateFall()
-{
-    if(!m_t.isGameEnd())
-        while(!m_t.checkBottom())
-            m_t.moveY();
-}
-
 void Tetris::step()
 {
     if(!m_t.isGameEnd())
     {
         if(m_clk.getElapsedTime().asSeconds() >= m_delay)
         {
-            m_t.checkBottom();
-            m_t.moveY();
+            m_t.step();
             m_clk.restart();
         }
-        m_t.update();
+        int dLineCount;
+        m_t.update(dLineCount);
+        lines += dLineCount;
     }
 }
 
@@ -72,4 +67,15 @@ void Tetris::render()
 {
     m_t.render(m_window);
     m_t.renderPreview(m_window, {500, 600});
+    m_showGameInterface();
+}
+
+void Tetris::m_showGameInterface()
+{
+    ImGui::Begin("Hi", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+    ImGui::Text("Lines: %d", lines);
+    ImGui::SetWindowSize(ImVec2(400, WINDOW_H/2));
+    ImGui::SetWindowPos(ImVec2(WINDOW_W + OUTLINE, 0));
+    
+    ImGui::End();
 }

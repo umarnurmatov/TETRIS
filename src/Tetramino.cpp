@@ -9,7 +9,7 @@ Tetramino::Tetramino()
 
     m_getNext();
     m_initTetramino(m_t_next, m_next);
-    clearGridAll();
+    m_clearGridAll();
     m_setupRenderGrid();
 }
 
@@ -41,7 +41,7 @@ void Tetramino::m_setupRenderPreview(sf::Vector2f position, sf::Vector2f squareS
     }
 }
 
-void Tetramino::clearGrid()
+void Tetramino::m_clearGrid()
 {
     for(auto& s : m_grid)
         if(s.type != SquareType::FALLEN)
@@ -51,7 +51,7 @@ void Tetramino::clearGrid()
         }
 }
 
-void Tetramino::clearGridAll()
+void Tetramino::m_clearGridAll()
 {
     for(auto& s : m_grid)
     {
@@ -62,7 +62,7 @@ void Tetramino::clearGridAll()
 
 void Tetramino::genTetramino()
 {
-    m_tpos = {GRID_W / 2, TETRAMINO_H / 2};
+    m_tpos = {GRID_W / 2, TETRAMINO_H / 2 - 1};
 
     m_current_col = m_next_col;
     m_current = m_next;
@@ -90,7 +90,7 @@ void Tetramino::moveX(int x)
     if(m_checkCollision()) m_tpos.x -= x;
 }
 
-void Tetramino::moveY()
+void Tetramino::m_moveY()
 {
     m_tpos.y += 1;
 }
@@ -116,6 +116,13 @@ void Tetramino::rotateCCW()
             m_rotateCW_90(v);
 }
 
+void Tetramino::immediateFall()
+{
+    if(!m_isGameEnd)
+        while(!m_checkBottom())
+            m_moveY();
+}
+
 bool Tetramino::m_checkCollision()
 {
     for(auto& v : m_t)
@@ -129,7 +136,7 @@ bool Tetramino::m_checkCollision()
     return false;
 }
 
-bool Tetramino::checkBottom()
+bool Tetramino::m_checkBottom()
 {
     bool bottom = false;
     for(auto& v : m_t)
@@ -157,7 +164,7 @@ bool Tetramino::checkBottom()
     return bottom;
 }
 
-int Tetramino::checkLine()
+int Tetramino::m_checkLine()
 {
     bool is_line;
     int line_count = 0;
@@ -184,11 +191,21 @@ int Tetramino::checkLine()
     return line_count;
 }
 
-void Tetramino::update()
+void Tetramino::step()
 {
-    checkLine();
+    if(m_isGameEnd) return;
 
-    clearGrid();
+    m_checkBottom();
+    m_moveY();
+}
+
+void Tetramino::update(int &lineCount)
+{
+    if(m_isGameEnd) return;
+
+    lineCount = m_checkLine();
+
+    m_clearGrid();
 
     for(auto& v : m_t)
     {   
