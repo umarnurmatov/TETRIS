@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#define WINDOW_H 800
+#define WINDOW_W 600
 
 #include "Tetris.hpp"
 
@@ -11,7 +13,7 @@
 int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
-    sf::VideoMode vm(sf::Vector2u(WINDOW_W+400, WINDOW_H));
+    sf::VideoMode vm(sf::Vector2u(WINDOW_W, WINDOW_H));
     sf::RenderWindow window(vm, "Tetris", sf::Style::Default ^ sf::Style::Resize, settings);
     window.setFramerateLimit(60);
     bool imgui_sfml_init = ImGui::SFML::Init(window);
@@ -30,12 +32,12 @@ int main() {
                 window.close();
             }
 
-            if(event.type == sf::Event::Resized)
-            {
-                view = window.getDefaultView();
-                view.setSize({event.size.width, event.size.height});
-                window.setView(view);
-            }
+            // if(event.type == sf::Event::Resized)
+            // {
+            //     view = window.getDefaultView();
+            //     view.setSize({event.size.width, event.size.height});
+            //     window.setView(view);
+            // }
 
             t.processEvent(event);
             //sf::Vector2f mouse_pos = window.mapPixelToCoords(sf::Mouse::getPosition(window));

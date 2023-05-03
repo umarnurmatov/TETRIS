@@ -10,35 +10,12 @@ Tetramino::Tetramino()
     m_getNext();
     m_initTetramino(m_t_next, m_next);
     m_clearGridAll();
-    m_setupRenderGrid();
 }
 
 void Tetramino::m_getNext()
 {
     m_next = m_rd()%TETRAMINO_COUNT;
     m_next_col = m_rd()%TETRAMINO_COUNT;
-}
-
-void Tetramino::m_setupRenderGrid()
-{
-    for(int i = 0; i < GRID_H*GRID_W; i++)
-    {
-        m_render_grid[i].setSize(sf::Vector2f(SQUARE_A-OUTLINE, SQUARE_A-OUTLINE));
-        m_render_grid[i].setOutlineThickness(OUTLINE);
-        m_render_grid[i].setOutlineColor(OUTLINE_COLOR);
-        m_render_grid[i].setPosition(sf::Vector2f(SQUARE_A*(i % GRID_W)+OUTLINE/2.f, SQUARE_A*floor(i / GRID_W)+OUTLINE/2.f));
-    }
-
-}
-
-void Tetramino::m_setupRenderPreview(sf::Vector2f position, sf::Vector2f squareSize)
-{
-    for(int i = 0; i < SQUARE_PER_TETRAMINO; i++)
-    {
-        m_render_preview[i].setSize(squareSize);
-        m_render_preview[i].setFillColor(m_colors[m_next_col]);
-        m_render_preview[i].setPosition(position + sf::Vector2f{m_t_next[i].x*SQUARE_A, m_t_next[i].y*SQUARE_A});
-    }
 }
 
 void Tetramino::m_clearGrid()
@@ -143,10 +120,10 @@ bool Tetramino::m_checkBottom()
     {
         sf::Vector2i p = v + m_tpos;
         if(p.y == GRID_H-1 || m_grid[m_XYtoSerial(p.x, p.y+1)].type == SquareType::FALLEN)
-            {
-                bottom = true;
-                break;
-            }
+        {
+            bottom = true;
+            break;
+        }
     }
 
     if(bottom)
@@ -214,6 +191,53 @@ void Tetramino::update(int &lineCount)
         m_grid[m_XYtoSerial(p.x, p.y)].color = m_colors[m_current_col];
     }
 
+}
+
+void Tetramino::m_setupRenderGrid()
+{
+    for(int i = 0; i < GRID_H*GRID_W; i++)
+    {
+        m_render_grid[i].setSize(sf::Vector2f(M_SQUARE_A-M_OUTLINE, M_SQUARE_A-M_OUTLINE));
+        m_render_grid[i].setOutlineThickness(M_OUTLINE);
+        m_render_grid[i].setOutlineColor(OUTLINE_COLOR);
+        m_render_grid[i].setPosition(sf::Vector2f(M_SQUARE_A*(i % GRID_W)+M_OUTLINE/2.f, M_SQUARE_A*floor(i / GRID_W)+M_OUTLINE/2.f));
+    }
+
+}
+
+void Tetramino::m_setupRenderPreview(sf::Vector2f position, sf::Vector2f squareSize)
+{
+    if(squareSize == sf::Vector2f()) squareSize = {M_SQUARE_A, M_SQUARE_A};
+    sf::Vector2f center{m_centers[m_next][0], m_centers[m_next][1]};
+    static sf::Vector2f popravka(sf::Vector2f(M_SQUARE_A * TETRAMINO_W / 2.f, M_SQUARE_A * TETRAMINO_H / 2.f));
+    for(int i = 0; i < SQUARE_PER_TETRAMINO; i++)
+    {
+        m_render_preview[i].setSize(squareSize);
+        m_render_preview[i].setFillColor(m_colors[m_next_col]);
+        m_render_preview[i].setPosition(position + (center + sf::Vector2f{m_t_next[i].x, m_t_next[i].y})*M_SQUARE_A - popravka);
+    }
+}
+
+sf::Vector2i Tetramino::setupRender(sf::Vector2i renderGridSize, int fitCoord, float outline)
+{
+    assert(fitCoord == 0 || fitCoord == 1);
+    if(fitCoord == 0)
+    {
+        M_WINDOW_W = renderGridSize.x;
+        M_WINDOW_H = M_WINDOW_W * GRID_H / GRID_W;
+        M_SQUARE_A = M_WINDOW_W / GRID_W;
+    }
+    else
+    {
+        M_WINDOW_H = renderGridSize.y;
+        M_WINDOW_W = M_WINDOW_H * GRID_W / GRID_H;
+        M_SQUARE_A = M_WINDOW_H / GRID_H;
+    }
+    M_OUTLINE = outline;
+
+    m_setupRenderGrid();
+
+    return sf::Vector2i(M_WINDOW_W + M_OUTLINE, M_WINDOW_H);
 }
 
 void Tetramino::render(sf::RenderWindow &w)

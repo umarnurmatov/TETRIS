@@ -7,8 +7,17 @@ Tetris::Tetris(sf::RenderWindow& window)
       lines{0}
 {
     m_t.genTetramino();
+    sf::Vector2i wSize(window.getSize().x, window.getSize().y);
+    M_TETRIS_GRID_SIZE = m_t.setupRender(wSize);
+
+    M_SIDE_INTERFACE_SIZE = {wSize.x - M_TETRIS_GRID_SIZE.x, wSize.y * 0.5};
+    M_SIDE_INTERFACE_POS = {M_TETRIS_GRID_SIZE.x, 0};
+
+    M_PREVIEW_SIZE = {M_SIDE_INTERFACE_SIZE.x, wSize.y - M_SIDE_INTERFACE_SIZE.y};
+    M_PREVIEW_CENTER_POS = (sf::Vector2i(M_TETRIS_GRID_SIZE.x, M_SIDE_INTERFACE_SIZE.y) + wSize) / 2;
+
     m_clk.restart();
-    m_audio.playMain();
+    m_audio.playMain();    
 }
 
 void Tetris::processEvent(sf::Event& event)
@@ -57,7 +66,7 @@ void Tetris::step()
             m_t.step();
             m_clk.restart();
         }
-        int dLineCount;
+        int dLineCount = 0;
         m_t.update(dLineCount);
         lines += dLineCount;
     }
@@ -74,8 +83,8 @@ void Tetris::m_showGameInterface()
 {
     ImGui::Begin("Hi", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
     ImGui::Text("Lines: %d", lines);
-    ImGui::SetWindowSize(ImVec2(400, WINDOW_H/2));
-    ImGui::SetWindowPos(ImVec2(WINDOW_W + OUTLINE, 0));
+    ImGui::SetWindowSize(M_SIDE_INTERFACE_SIZE);
+    ImGui::SetWindowPos(M_SIDE_INTERFACE_POS);
     
     ImGui::End();
 }

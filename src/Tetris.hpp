@@ -26,6 +26,7 @@ public:
     void step();
 
     //////////////////// РЕНДЕР /////////////////////
+    
     void render();
 
 private:
@@ -44,6 +45,14 @@ private:
     //////////////////// РЕНДЕР /////////////////////
 
     sf::RenderWindow &m_window;
+
+    sf::Vector2i M_TETRIS_GRID_SIZE;
+
+    sf::Vector2i M_SIDE_INTERFACE_SIZE;
+    sf::Vector2i M_SIDE_INTERFACE_POS;
+    
+    sf::Vector2i M_PREVIEW_SIZE;
+    sf::Vector2i M_PREVIEW_CENTER_POS;
 
     /////////////////// ИНТЕРФЕЙС ///////////////////
 

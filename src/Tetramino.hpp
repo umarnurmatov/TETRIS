@@ -10,12 +10,6 @@
 #define GRID_H 20
 #define GRID_W 10
 
-#define WINDOW_H 800
-#define WINDOW_W WINDOW_H * GRID_W / GRID_H
-
-#define SQUARE_A WINDOW_H / GRID_H
-#define OUTLINE 5.f
-
 #define TETRAMINO_W 2
 #define TETRAMINO_H 4
 
@@ -43,6 +37,7 @@ struct Square
 class Tetramino
 {   
 public:
+    
     Tetramino();
 
     //////////////////// ЛОГИКА //////////////////// 
@@ -69,6 +64,13 @@ public:
     void update(int &lineCount);
 
     //////////////////// РЕНДЕР //////////////////// 
+
+    /// @param renderGridSize размер области для отрисовки
+    /// @param fitCoord т.к. квадратики тетрмино должны быть квадратные(!), их размер будет вычисляться относительно 
+    ///                 x или y размера grid. 0 = x, 1 = y
+    /// @param outline толщина обводки у квадратиков тетрамино
+    /// @return получившиеся размеры сетки
+    sf::Vector2i setupRender(sf::Vector2i renderGridSize, int fitCoord = 1, float outline = 5.f);
 
     void render(sf::RenderWindow &w);
 
@@ -144,9 +146,14 @@ private:
 
     //////////////////// РЕНДЕР ////////////////////
 
+    float M_SQUARE_A;
+    int M_WINDOW_H;
+    int M_WINDOW_W;
+    float M_OUTLINE;
+
     std::array<sf::RectangleShape, GRID_H*GRID_H> m_render_grid;
     std::array<sf::RectangleShape, SQUARE_PER_TETRAMINO> m_render_preview;
 
     void m_setupRenderGrid();
-    void m_setupRenderPreview(sf::Vector2f position, sf::Vector2f squareSize = {SQUARE_A, SQUARE_A});
+    void m_setupRenderPreview(sf::Vector2f position, sf::Vector2f squareSize = {});
 };
