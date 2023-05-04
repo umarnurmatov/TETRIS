@@ -18,7 +18,7 @@ Tetris::Tetris(sf::RenderWindow& window)
     M_SIDE_INTERFACE_POS = {M_TETRIS_GRID_SIZE.x, 0};
 
     M_PREVIEW_SIZE = {M_SIDE_INTERFACE_SIZE.x, wSize.y - M_SIDE_INTERFACE_SIZE.y};
-    M_PREVIEW_CENTER_POS = (sf::Vector2i(M_TETRIS_GRID_SIZE.x, M_SIDE_INTERFACE_SIZE.y) + wSize) / 2;
+    M_PREVIEW_CENTER_POS = sf::Vector2f(M_TETRIS_GRID_SIZE.x + wSize.x, M_SIDE_INTERFACE_SIZE.y + wSize.y) / 2.f;
 
     m_clk.restart();
     m_audio.playMain();    
@@ -50,6 +50,9 @@ void Tetris::processEvent(sf::Event& event)
             m_t.immediateFall();
             m_audio.playSound(GAME_SOUNDS::ZAP);
             break;
+        case sf::Keyboard::Escape:
+            m_state.state = m_state.state == PLAY ? PAUSE : PLAY;
+            break;
         }
         break;
     case sf::Event::KeyReleased:
@@ -79,56 +82,60 @@ void Tetris::m_resetTetris()
 
 void Tetris::step()
 {
-    if(!m_t.isGameEnd())
+    if(m_state.state == PLAY)
     {
-        if(m_clk.getElapsedTime().asMilliseconds() >= m_current_delay)
+        if(!m_t.isGameEnd())
         {
-            m_t.step();
-            m_clk.restart();
+            if(m_clk.getElapsedTime().asMilliseconds() >= m_current_delay)
+            {
+                m_t.step();
+                m_clk.restart();
+            }
+
+            int dLineCount = m_t.update();
+
+            m_lines += dLineCount;
+
+            switch(dLineCount)
+            {
+            case 1:
+                m_score += LINE_1_SCORE;
+                break;
+            case 2:
+                m_score += LINE_2_SCORE;
+                break;
+            case 3:
+                m_score += LINE_3_SCORE;
+                break;
+            case 4:
+                m_score += LINE_4_SCORE;
+                break;
+            }
+
+            if(m_score - m_score_prev >= NEW_LEVEL_SCORE)
+            {
+                m_score_prev = m_score;
+                m_level++;
+                m_genNextDelay();
+            }
         }
-
-        int dLineCount = m_t.update();
-
-        m_lines += dLineCount;
-
-        switch(dLineCount)
+        else
         {
-        case 1:
-            m_score += LINE_1_SCORE;
-            break;
-        case 2:
-            m_score += LINE_2_SCORE;
-            break;
-        case 3:
-            m_score += LINE_3_SCORE;
-            break;
-        case 4:
-            m_score += LINE_4_SCORE;
-            break;
+            m_resetTetris();
+            m_t.restart();
         }
-
-        if(m_score - m_score_prev >= NEW_LEVEL_SCORE)
-        {
-            m_score_prev = m_score;
-            m_level++;
-            m_genNextDelay();
-        }
-    }
-    else
-    {
-        m_resetTetris();
-        m_t.restart();
     }
 }
 
 void Tetris::render()
 {
     m_t.render(m_window);
-    m_t.renderPreview(m_window, {500, 600});
-    m_showGameInterface();
+    m_t.renderPreview(m_window, M_PREVIEW_CENTER_POS);
+
+    m_gameInterface();
 }
 
-void Tetris::m_showGameInterface()
+void Tetris::m_gameInterface()
 {
     ImGui::Begin("Hi", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
     ImGui::Text("Lines: %d", m_lines);
@@ -136,6 +143,17 @@ void Tetris::m_showGameInterface()
     ImGui::Text("Level: %d", m_level);
     ImGui::SetWindowSize(M_SIDE_INTERFACE_SIZE);
     ImGui::SetWindowPos(M_SIDE_INTERFACE_POS);
+
+    if(m_state.state == PAUSE)
+        ImGui::OpenPopup("Pause");
+
+    if (ImGui::BeginPopupModal("Pause", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar))
+    {
+        ImGui::Text("Game is paused");
+        ImGui::Text("[ESCAPE] to continue");
+        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_Escape)) { ImGui::CloseCurrentPopup(); }
+        ImGui::EndPopup();
+    }
     
     ImGui::End();
 }

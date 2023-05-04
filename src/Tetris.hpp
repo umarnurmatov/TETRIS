@@ -70,10 +70,21 @@ private:
     sf::Vector2i M_SIDE_INTERFACE_POS;
 
     sf::Vector2i M_PREVIEW_SIZE;
-    sf::Vector2i M_PREVIEW_CENTER_POS;
+    sf::Vector2f M_PREVIEW_CENTER_POS;
 
     /////////////////// ИНТЕРФЕЙС ///////////////////
 
-    void m_showGameInterface();
+    void m_gameInterface();
 
+    enum StateType
+    {
+        PAUSE,
+        PLAY
+    };
+
+    struct M_State
+    {
+        StateType state = PLAY;
+    } 
+    m_state;
 };
