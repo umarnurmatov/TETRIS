@@ -51,7 +51,7 @@ void Tetris::processEvent(sf::Event& event)
             break;
         case sf::Keyboard::Space:
             m_t.immediateFall();
-            m_audio.playSound(GAME_SOUNDS::ZAP);
+            m_audio.putQueue(GAME_SOUNDS::ZAP);
             break;
         case sf::Keyboard::Tab:
             if(m_state.state == PLAY) 
@@ -137,6 +137,8 @@ void Tetris::step()
                 break;
             }
 
+            if(dLineCount > 0) m_audio.putQueue(HIT);
+
             if(m_score - m_score_prev >= NEW_LEVEL_SCORE)
             {
                 m_score_prev = m_score;
@@ -155,7 +157,7 @@ void Tetris::render()
 {
     m_t.render(m_window);
     if(m_state.state != MENU) m_t.renderPreview(m_window, M_PREVIEW_CENTER_POS);
-
+    m_audio.playQueue();
     m_gameInterface();
 }
 

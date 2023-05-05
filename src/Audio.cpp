@@ -57,3 +57,17 @@ bool Audio::playSound(GAME_SOUNDS n)
 {
     m_gameAudio[static_cast<int>(n)].play();
 }
+
+void Audio::putQueue(GAME_SOUNDS s)
+{
+    soundQueue.push(s);
+}
+
+void Audio::playQueue()
+{
+    if(!soundQueue.empty())
+    {
+        playSound(soundQueue.front());
+        soundQueue.pop();
+    }
+}

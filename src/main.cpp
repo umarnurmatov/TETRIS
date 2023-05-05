@@ -45,7 +45,7 @@ int main() {
 
         ImGui::SFML::Update(window, deltaClock.restart());
 
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
         
         t.step();
 
