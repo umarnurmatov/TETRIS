@@ -25,6 +25,7 @@ public:
 
     void playMain();
     void pauseMain();
+    void restartMain();
 
     /// @param num порядковый номер основной темы
     /// @return если переключилось, true

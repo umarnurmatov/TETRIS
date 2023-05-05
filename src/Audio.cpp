@@ -28,6 +28,11 @@ void Audio::playMain()
     m_mainAudio[m_mainAudio_Current].play();
 }
 
+void Audio::restartMain()
+{
+    m_mainAudio[m_mainAudio_Current].setPlayingOffset(sf::seconds(0));
+}
+
 void Audio::pauseMain()
 {
     m_mainAudio[m_mainAudio_Current].pause();

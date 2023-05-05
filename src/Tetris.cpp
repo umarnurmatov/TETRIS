@@ -24,8 +24,7 @@ Tetris::Tetris(sf::RenderWindow& window)
     sf::IntRect logoArea(sf::Vector2i(0, 0), LOGO_TEX_SIZE);
     m_logo.loadFromFile(Utils::getFilePath("/res/tex/logo.png"), logoArea); 
 
-    m_clk.restart();
-    m_audio.playMain();    
+    m_clk.restart();  
 }
 
 void Tetris::processEvent(sf::Event& event)
@@ -68,6 +67,15 @@ void Tetris::processEvent(sf::Event& event)
                 m_audio.playMain();
             }
             break;
+        case sf::Keyboard::P:
+            if(m_state.state == PLAY) 
+            {
+                m_resetTetris();
+            }
+            break;
+        case sf::Keyboard::M:
+            m_state.state = MENU;
+            break;
         }
         break;
     case sf::Event::KeyReleased:
@@ -93,6 +101,8 @@ void Tetris::m_resetTetris()
     m_fast_delay = DELAY_FAST_INIT;
     m_lines = 0;
     m_score = 0;
+
+    m_t.restart();
 }
 
 void Tetris::step()
@@ -136,8 +146,7 @@ void Tetris::step()
         }
         else
         {
-            m_resetTetris();
-            m_t.restart();
+            m_state.state = MENU;
         }
     }
 }
@@ -145,7 +154,7 @@ void Tetris::step()
 void Tetris::render()
 {
     m_t.render(m_window);
-    m_t.renderPreview(m_window, M_PREVIEW_CENTER_POS);
+    if(m_state.state != MENU) m_t.renderPreview(m_window, M_PREVIEW_CENTER_POS);
 
     m_gameInterface();
 }
@@ -158,6 +167,8 @@ void Tetris::m_gameInterface()
     ImGui::Text("Level: %d", m_level);
     ImGui::Separator();
     ImGui::Text("[TAB] to pause the game");
+    ImGui::Text("[P] to restart the game");
+    ImGui::Text("[M] to main menu");
     ImGui::SetWindowSize(M_SIDE_INTERFACE_SIZE);
     ImGui::SetWindowPos(M_SIDE_INTERFACE_POS);
 
@@ -170,9 +181,14 @@ void Tetris::m_gameInterface()
     {
         
         ImGui::Image(m_logo, LOGO_SIZE);
-        ImGui::Text("[S]tart");
+        ImGui::Text(m_t.isGameEnd() ? "Re[s]tart" : "[S]tart");
         if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S)) 
         { 
+
+            m_resetTetris();
+            m_audio.restartMain();
+            m_audio.playMain();
+
             m_state.state = PLAY; 
             ImGui::CloseCurrentPopup(); 
         }
