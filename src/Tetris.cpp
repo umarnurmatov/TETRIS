@@ -168,9 +168,14 @@ void Tetris::m_gameInterface()
     ImGui::Text("Score: %d", m_score);
     ImGui::Text("Level: %d", m_level);
     ImGui::Separator();
-    ImGui::Text("[TAB] to pause the game");
-    ImGui::Text("[P] to restart the game");
-    ImGui::Text("[M] to main menu");
+    ImGui::Text("[A]/[D]  move right/left)");
+    ImGui::Text("[W]/[S]  rotate CW/CCW");
+    ImGui::Text("[E]      accelerate");
+    ImGui::Text("[SPACE]  drop");
+    ImGui::Separator();
+    ImGui::Text("[TAB]  pause the game");
+    ImGui::Text("[P]    restart the game");
+    ImGui::Text("[M]    main menu");
     ImGui::SetWindowSize(M_SIDE_INTERFACE_SIZE);
     ImGui::SetWindowPos(M_SIDE_INTERFACE_POS);
 
