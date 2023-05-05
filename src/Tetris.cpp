@@ -12,6 +12,7 @@ Tetris::Tetris(sf::RenderWindow& window)
 {
     m_t.genTetramino();
     sf::Vector2i wSize(window.getSize().x, window.getSize().y);
+    M_WINDOW_SIZE = wSize;
     M_TETRIS_GRID_SIZE = m_t.setupRender(wSize);
 
     M_SIDE_INTERFACE_SIZE = {wSize.x - M_TETRIS_GRID_SIZE.x, wSize.y * 0.5};
@@ -19,6 +20,9 @@ Tetris::Tetris(sf::RenderWindow& window)
 
     M_PREVIEW_SIZE = {M_SIDE_INTERFACE_SIZE.x, wSize.y - M_SIDE_INTERFACE_SIZE.y};
     M_PREVIEW_CENTER_POS = sf::Vector2f(M_TETRIS_GRID_SIZE.x + wSize.x, M_SIDE_INTERFACE_SIZE.y + wSize.y) / 2.f;
+
+    sf::IntRect logoArea(sf::Vector2i(0, 0), LOGO_TEX_SIZE);
+    m_logo.loadFromFile(Utils::getFilePath("/res/tex/logo.png"), logoArea); 
 
     m_clk.restart();
     m_audio.playMain();    
@@ -50,8 +54,19 @@ void Tetris::processEvent(sf::Event& event)
             m_t.immediateFall();
             m_audio.playSound(GAME_SOUNDS::ZAP);
             break;
+        case sf::Keyboard::Tab:
+            if(m_state.state == PLAY) 
+            {
+                m_state.state = PAUSE;
+                m_audio.pauseMain();
+            }
+            break;
         case sf::Keyboard::Escape:
-            m_state.state = m_state.state == PLAY ? PAUSE : PLAY;
+            if(m_state.state == PAUSE) 
+            {
+                m_state.state = PLAY;
+                m_audio.playMain();
+            }
             break;
         }
         break;
@@ -141,17 +156,44 @@ void Tetris::m_gameInterface()
     ImGui::Text("Lines: %d", m_lines);
     ImGui::Text("Score: %d", m_score);
     ImGui::Text("Level: %d", m_level);
+    ImGui::Separator();
+    ImGui::Text("[TAB] to pause the game");
     ImGui::SetWindowSize(M_SIDE_INTERFACE_SIZE);
     ImGui::SetWindowPos(M_SIDE_INTERFACE_POS);
 
+    
+
+    if(m_state.state == MENU)
+        ImGui::OpenPopup("Menu");
+
+    if (ImGui::BeginPopupModal("Menu", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar))
+    {
+        
+        ImGui::Image(m_logo, LOGO_SIZE);
+        ImGui::Text("[S]tart");
+        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S)) 
+        { 
+            m_state.state = PLAY; 
+            ImGui::CloseCurrentPopup(); 
+        }
+
+        sf::Vector2i wSize = ImGui::GetWindowSize();
+        ImGui::SetWindowPos(M_WINDOW_SIZE / 2 - wSize / 2);
+        ImGui::EndPopup();
+    }
+
     if(m_state.state == PAUSE)
         ImGui::OpenPopup("Pause");
+        
 
     if (ImGui::BeginPopupModal("Pause", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar))
     {
         ImGui::Text("Game is paused");
         ImGui::Text("[ESCAPE] to continue");
-        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_Escape)) { ImGui::CloseCurrentPopup(); }
+        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_Escape)) 
+        { 
+            ImGui::CloseCurrentPopup(); 
+        }
         ImGui::EndPopup();
     }
     

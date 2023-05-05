@@ -7,19 +7,21 @@
 #include <array>
 #include <chrono>
 
+#include "Utils.hpp"
+
 #define GRID_H 20
 #define GRID_W 10
 
 #define TETRAMINO_W 2
 #define TETRAMINO_H 4
 
-#define EMPTY_COLOR sf::Color::White
-#define OUTLINE_COLOR sf::Color::White
-
 #define SQUARE_PER_TETRAMINO 4
 #define TETRAMINO_COUNT 7
 
-using std::cout, std::endl;
+#define SQUARE_TEX_COUNT 9
+#define BACKGROUND_SQUARE_TEX_COUNT 2
+#define WHITE_BACK 10
+#define BLACK_BACK 9
 
 enum SquareType
 {
@@ -30,7 +32,7 @@ enum SquareType
 
 struct Square
 {
-    sf::Color color;
+    sf::IntRect rect;
     SquareType type;
 };
 
@@ -70,9 +72,10 @@ public:
     /// @param renderGridSize размер области для отрисовки
     /// @param fitCoord т.к. квадратики тетрмино должны быть квадратные(!), их размер будет вычисляться относительно 
     ///                 x или y размера grid. 0 = x, 1 = y
-    /// @param outline толщина обводки у квадратиков тетрамино
+    /// @param previewSquareSize размер квадратика на превью; по умолчанию такой же как и на игровом поле
     /// @return получившиеся размеры сетки
-    sf::Vector2i setupRender(sf::Vector2i renderGridSize, int fitCoord = 1, float outline = 5.f);
+    sf::Vector2i setupRender(sf::Vector2i renderGridSize, int fitCoord = 1, sf::Vector2f previewSquareSize = {});
+
 
     void render(sf::RenderWindow &w);
 
@@ -88,8 +91,6 @@ private:
 
     int m_current;
     int m_next;
-    int m_current_col;
-    int m_next_col;
     
     /* -----
        |0|1|
@@ -105,11 +106,6 @@ private:
     std::array<std::array<int, 2>, TETRAMINO_COUNT> m_centers
     {
         { {1,1}, {0,2}, {0,2}, {1,2}, {1,2}, {1,2}, {1,2} }
-    };
-
-    std::array<sf::Color, TETRAMINO_COUNT> m_colors
-    {
-        { sf::Color::Green, sf::Color::Blue, sf::Color::Red, sf::Color::Magenta, sf::Color::Cyan, sf::Color::Yellow, {121, 240, 15} }
     };
 
     int m_XYtoSerial(int x, int y) { return y * GRID_W + x; }
@@ -151,11 +147,34 @@ private:
     float M_SQUARE_A;
     int M_WINDOW_H;
     int M_WINDOW_W;
-    float M_OUTLINE;
+    float M_OUTLINE;    
+
+    sf::Texture m_square_texture;
+    std::vector<sf::IntRect> m_squares
+    {
+        {
+            {sf::Vector2i{0, 0}, sf::Vector2i{10, 10}},
+            {sf::Vector2i{0, 10}, sf::Vector2i{10, 10}},
+            {sf::Vector2i{0, 20}, sf::Vector2i{10, 10}},
+            {sf::Vector2i{0, 30}, sf::Vector2i{10, 10}},
+            {sf::Vector2i{0, 40}, sf::Vector2i{10, 10}},
+            {sf::Vector2i{0, 50}, sf::Vector2i{10, 10}},
+            {sf::Vector2i{0, 60}, sf::Vector2i{10, 10}},
+            {sf::Vector2i{0, 70}, sf::Vector2i{10, 10}},
+            {sf::Vector2i{0, 80}, sf::Vector2i{10, 10}},
+
+            {sf::Vector2i{10, 0}, sf::Vector2i{20, 20}},  // Black background
+            {sf::Vector2i{10, 20}, sf::Vector2i{20, 20}}  // White background
+        }  
+    };
 
     std::array<sf::RectangleShape, GRID_H*GRID_H> m_render_grid;
     std::array<sf::RectangleShape, SQUARE_PER_TETRAMINO> m_render_preview;
 
+    int m_current_square; // [0, SQUARE_TEX_COUNT)
+    int m_next_square;    // [0, SQUARE_TEX_COUNT)
+
     void m_setupRenderGrid();
-    void m_setupRenderPreview(sf::Vector2f position, sf::Vector2f squareSize = {});
+    void m_setupRenderPreview(sf::Vector2f squareSize = {});
+
 };

@@ -20,6 +20,9 @@
 #define LINE_3_SCORE 700
 #define LINE_4_SCORE 1500
 
+#define LOGO_TEX_SIZE sf::Vector2i(64, 16)
+#define LOGO_SIZE sf::Vector2f(256, 64)
+
 class Tetris
 {
 public:
@@ -63,7 +66,7 @@ private:
     //////////////////// РЕНДЕР /////////////////////
 
     sf::RenderWindow &m_window;
-
+    sf::Vector2i M_WINDOW_SIZE;
     sf::Vector2i M_TETRIS_GRID_SIZE;
 
     sf::Vector2i M_SIDE_INTERFACE_SIZE;
@@ -74,17 +77,20 @@ private:
 
     /////////////////// ИНТЕРФЕЙС ///////////////////
 
+    sf::Texture m_logo;
+
     void m_gameInterface();
 
     enum StateType
     {
+        MENU,
         PAUSE,
         PLAY
     };
 
     struct M_State
     {
-        StateType state = PLAY;
+        StateType state = MENU;
     } 
     m_state;
 };
