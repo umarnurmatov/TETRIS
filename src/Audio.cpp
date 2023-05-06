@@ -1,7 +1,7 @@
 #include "Audio.hpp"
 
 Audio::Audio()
-    : m_mainAudio_Current{1}
+    : m_mainAudio_Current{0}
 {
     for(int i = 0; auto& s : m_mainAudio_Files)
     {
