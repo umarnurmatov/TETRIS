@@ -23,6 +23,8 @@
 #define WHITE_BACK 10
 #define BLACK_BACK 9
 
+#define OUTLINE 1
+
 enum SquareType
 {
     EMPTY,  // пустая клеточка

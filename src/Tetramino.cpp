@@ -207,7 +207,8 @@ void Tetramino::m_setupRenderGrid()
 {
     for(int i = 0; i < GRID_H*GRID_W; i++)
     {
-        m_render_grid[i].setSize(sf::Vector2f(M_SQUARE_A, M_SQUARE_A));
+        m_render_grid[i].setSize(sf::Vector2f(M_SQUARE_A-OUTLINE, M_SQUARE_A-OUTLINE));
+        m_render_grid[i].setOrigin(sf::Vector2f(-OUTLINE, -OUTLINE));
         m_render_grid[i].setTexture(&m_square_texture);
         m_render_grid[i].setTextureRect(m_squares[m_current_square]);
         m_render_grid[i].setPosition(sf::Vector2f(M_SQUARE_A*(i % GRID_W), M_SQUARE_A*floor(i / GRID_W)));
@@ -220,7 +221,8 @@ void Tetramino::m_setupRenderPreview(sf::Vector2f squareSize)
     if(squareSize == sf::Vector2f()) squareSize = {M_SQUARE_A, M_SQUARE_A};
     for(int i = 0; i < SQUARE_PER_TETRAMINO; i++)
     {
-        m_render_preview[i].setSize(squareSize);
+        m_render_preview[i].setSize(squareSize - sf::Vector2f{OUTLINE, OUTLINE});
+        m_render_grid[i].setOrigin(sf::Vector2f(-OUTLINE, -OUTLINE));
         m_render_preview[i].setTexture(&m_square_texture);
         m_render_preview[i].setTextureRect(m_squares[m_next_square]);
     }
@@ -245,7 +247,7 @@ sf::Vector2i Tetramino::setupRender(sf::Vector2i renderGridSize, int fitCoord, s
     m_setupRenderGrid();
     m_setupRenderPreview(previewSquareSize);
 
-    return sf::Vector2i(M_WINDOW_W + M_OUTLINE, M_WINDOW_H);
+    return sf::Vector2i(M_WINDOW_W, M_WINDOW_H);
 }
 
 void Tetramino::render(sf::RenderWindow &w)
