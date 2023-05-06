@@ -49,7 +49,7 @@ int main() {
         
         t.step();
 
-        window.clear(sf::Color::White);
+        window.clear(t.getBackgroundColor());
         t.render();
         ImGui::SFML::Render(window);
         window.display();

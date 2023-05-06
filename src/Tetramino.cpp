@@ -9,6 +9,8 @@ Tetramino::Tetramino()
 
     m_square_texture.loadFromFile(Utils::getFilePath("res/tex/squares.png"));
 
+    setBackground(0);
+    
     m_getNext();
     m_initTetramino(m_t_next, m_next);
     m_clearGridAll();
@@ -25,7 +27,7 @@ void Tetramino::m_clearGrid()
     for(auto& s : m_grid)
         if(s.type != SquareType::FALLEN)
         {
-            s.rect = m_squares[WHITE_BACK];
+            s.rect = m_squares[M_BACKGROUND];
             s.type = SquareType::EMPTY;
         }
 }
@@ -34,7 +36,7 @@ void Tetramino::m_clearGridAll()
 {
     for(auto& s : m_grid)
     {
-        s.rect = m_squares[WHITE_BACK];
+        s.rect = m_squares[M_BACKGROUND];
         s.type = SquareType::EMPTY;
     }
 }
@@ -271,4 +273,19 @@ void Tetramino::renderPreview(sf::RenderWindow &w, sf::Vector2f position)
 
     for(auto& r : m_render_preview)
         w.draw(r);
+}
+
+void Tetramino::setBackground(int n)
+{
+    assert(0 <= n <= 1);
+    switch(n)
+    {
+    case 0:
+        M_BACKGROUND = WHITE_BACK;
+        break;
+    case 1:
+        M_BACKGROUND = BLACK_BACK;
+        break;
+    }
+    m_clearGrid();
 }

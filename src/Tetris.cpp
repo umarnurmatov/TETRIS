@@ -14,6 +14,7 @@ Tetris::Tetris(sf::RenderWindow& window)
     sf::Vector2i wSize(window.getSize().x, window.getSize().y);
     M_WINDOW_SIZE = wSize;
     M_TETRIS_GRID_SIZE = m_t.setupRender(wSize);
+    m_t.setBackground(static_cast<int>(m_state.theme));
 
     M_SIDE_INTERFACE_SIZE = {wSize.x - M_TETRIS_GRID_SIZE.x, wSize.y * 0.5};
     M_SIDE_INTERFACE_POS = {M_TETRIS_GRID_SIZE.x, 0};
@@ -74,7 +75,8 @@ void Tetris::processEvent(sf::Event& event)
             }
             break;
         case sf::Keyboard::M:
-            m_state.state = MENU;
+            if(m_state.state == PLAY)
+                m_state.state = MENU;
             break;
         }
         break;
@@ -161,8 +163,34 @@ void Tetris::render()
     m_gameInterface();
 }
 
+sf::Color Tetris::getBackgroundColor()
+{
+    switch (m_state.theme)
+    {
+    case LIGHT:
+        return sf::Color::White;
+        break;
+    case DARK:
+        return sf::Color::Black;
+        break;
+    default:
+        return sf::Color::Magenta;
+        break;
+    }
+}
+
 void Tetris::m_gameInterface()
 {
+    switch (m_state.theme)
+    {
+    case LIGHT:
+        ImGui::StyleColorsLight();
+        break;
+    case DARK:
+        ImGui::StyleColorsDark();
+        break;
+    }
+
     ImGui::Begin("Hi", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
     ImGui::Text("Lines: %d", m_lines);
     ImGui::Text("Score: %d", m_score);
@@ -178,7 +206,6 @@ void Tetris::m_gameInterface()
     ImGui::Text("[M]    main menu");
     ImGui::SetWindowSize(M_SIDE_INTERFACE_SIZE);
     ImGui::SetWindowPos(M_SIDE_INTERFACE_POS);
-
     
 
     if(m_state.state == MENU)
@@ -189,6 +216,7 @@ void Tetris::m_gameInterface()
         
         ImGui::Image(m_logo, LOGO_SIZE);
         ImGui::Text(m_t.isGameEnd() ? "Re[s]tart" : "[S]tart");
+        ImGui::Text("S[e]ttings");
         if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_S)) 
         { 
 
@@ -199,6 +227,53 @@ void Tetris::m_gameInterface()
             m_state.state = PLAY; 
             ImGui::CloseCurrentPopup(); 
         }
+
+        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_E)) 
+        { 
+            m_state.state = SETTINGS;
+            ImGui::CloseCurrentPopup();
+        }
+
+        sf::Vector2i wSize = ImGui::GetWindowSize();
+        ImGui::SetWindowPos(M_WINDOW_SIZE / 2 - wSize / 2);
+        ImGui::EndPopup();
+    }
+
+    if(m_state.state == SETTINGS)
+        ImGui::OpenPopup("Settings");
+
+    if (ImGui::BeginPopupModal("Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar))
+    {
+        
+        ImGui::Image(m_logo, LOGO_SIZE);
+        ImGui::Text("[R]eturn");
+        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R)) 
+        { 
+            m_state.state = MENU; 
+            ImGui::CloseCurrentPopup(); 
+        }
+
+        int musicType = m_state.music;
+        ImGui::Combo("[M]usic", &musicType, "Classic\0Metal\0Piano\0");
+
+        if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_M)) 
+        { 
+            musicType = (musicType + 1) % MAIN_AUDIO_COUNT;
+            m_state.music = static_cast<MainMusicType>(musicType);
+            m_audio.switchMain(m_state.music);
+            m_audio.restartMain();
+            m_audio.playMain();
+        }
+
+        int themeType = m_state.theme;
+        ImGui::Combo("[T]heme", &themeType, "Light\0Dark\0");
+
+        if(ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_T))
+        {
+            themeType = (themeType + 1) % THEME_COUNT;
+            m_state.theme = static_cast<ThemeType>(themeType);
+            m_t.setBackground(themeType);
+        } 
 
         sf::Vector2i wSize = ImGui::GetWindowSize();
         ImGui::SetWindowPos(M_WINDOW_SIZE / 2 - wSize / 2);

@@ -19,6 +19,13 @@ enum GAME_SOUNDS
     ZAP  
 };
 
+enum MainMusicType
+{
+    CLASSIC,
+    METAL,
+    PIANO
+};
+
 class Audio
 {
 public:
@@ -28,9 +35,8 @@ public:
     void pauseMain();
     void restartMain();
 
-    /// @param num порядковый номер основной темы
     /// @return если переключилось, true
-    bool switchMain(int num);
+    bool switchMain(MainMusicType num);
 
     /// @param num порядковый номер основной темы
     /// @return если переключилось, true
@@ -46,9 +52,9 @@ private:
     
     std::array<std::string, MAIN_AUDIO_COUNT> m_mainAudio_Files = 
     {
+        "res/audio/Tetris-Classic-Theme.flac",
         "res/audio/Powerglove-Tetris.flac",
-        "res/audio/Scott-Bradlee-Levels-of-Tetris.flac",
-        "res/audio/Tetris-Classic-Theme.flac"
+        "res/audio/Scott-Bradlee-Levels-of-Tetris.flac"
     };
 
     int m_mainAudio_Current;

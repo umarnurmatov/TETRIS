@@ -38,19 +38,12 @@ void Audio::pauseMain()
     m_mainAudio[m_mainAudio_Current].pause();
 }
 
-/// @param num порядковый номер основной темы
-/// @return если переключилось, true
-bool Audio::switchMain(int num)
+bool Audio::switchMain(MainMusicType t)
 {
-    if(num > m_mainAudio.size()-1)
-        return false;
-    else
-    {
-        m_mainAudio[m_mainAudio_Current].stop();
-        m_mainAudio_Current = num;
-        m_mainAudio[m_mainAudio_Current].play();
-        return true;
-    }
+    m_mainAudio[m_mainAudio_Current].stop();
+    m_mainAudio_Current = static_cast<int>(t);
+    m_mainAudio[m_mainAudio_Current].play();
+    return true;
 }
 
 bool Audio::playSound(GAME_SOUNDS n)

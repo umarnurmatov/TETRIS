@@ -85,6 +85,10 @@ public:
     /// @param position позиция центра превью тетрамино на экране
     void renderPreview(sf::RenderWindow &w, sf::Vector2f position);
 
+    /// @brief меняет цвет <пустого> квадратика
+    /// @param n [0, 1] 0 - светлый, 1 - темный
+    void setBackground(int n);
+
 private:
     //////////////////// ЛОГИКА ////////////////////
 
@@ -149,7 +153,6 @@ private:
     float M_SQUARE_A;
     int M_WINDOW_H;
     int M_WINDOW_W;
-    float M_OUTLINE;    
 
     sf::Texture m_square_texture;
     std::vector<sf::IntRect> m_squares
@@ -175,6 +178,8 @@ private:
 
     int m_current_square; // [0, SQUARE_TEX_COUNT)
     int m_next_square;    // [0, SQUARE_TEX_COUNT)
+
+    int M_BACKGROUND; // [0, 1] см. setBackground()
 
     void m_setupRenderGrid();
     void m_setupRenderPreview(sf::Vector2f squareSize = {});

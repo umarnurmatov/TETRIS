@@ -23,6 +23,8 @@
 #define LOGO_TEX_SIZE sf::Vector2i(64, 16)
 #define LOGO_SIZE sf::Vector2f(256, 64)
 
+#define THEME_COUNT 2
+
 class Tetris
 {
 public:
@@ -39,6 +41,7 @@ public:
     //////////////////// РЕНДЕР /////////////////////
     
     void render();
+    sf::Color getBackgroundColor();
 
 private:
     //////////////////// ТЕТРИС /////////////////////
@@ -84,13 +87,22 @@ private:
     enum StateType
     {
         MENU,
+        SETTINGS,
         PAUSE,
         PLAY
+    };
+
+    enum ThemeType
+    {
+        LIGHT,
+        DARK
     };
 
     struct M_State
     {
         StateType state = MENU;
+        ThemeType theme = LIGHT;
+        MainMusicType music = CLASSIC;
     } 
     m_state;
 };
