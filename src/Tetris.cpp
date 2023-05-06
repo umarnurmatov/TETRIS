@@ -36,23 +36,26 @@ void Tetris::processEvent(sf::Event& event)
         switch(event.key.code)
         {
         case sf::Keyboard::A:
-            m_t.moveX(-1);
+            if(m_state.state == PLAY) m_t.moveX(-1);
             break;
         case sf::Keyboard::D:
-            m_t.moveX(1);
+            if(m_state.state == PLAY) m_t.moveX(1);
             break;
         case sf::Keyboard::W:
-            m_t.rotateCW();
+            if(m_state.state == PLAY) m_t.rotateCW();
             break;  
         case sf::Keyboard::S:
-            m_t.rotateCCW();
+            if(m_state.state == PLAY) m_t.rotateCCW();
             break;
         case sf::Keyboard::E:
-            m_current_delay = m_fast_delay;
+            if(m_state.state == PLAY) m_current_delay = m_fast_delay;
             break;
         case sf::Keyboard::Space:
-            m_t.immediateFall();
-            m_audio.putQueue(GAME_SOUNDS::ZAP);
+            if(m_state.state == PLAY) 
+            {
+                m_t.immediateFall();
+                m_audio.putQueue(GAME_SOUNDS::ZAP);
+            }
             break;
         case sf::Keyboard::Tab:
             if(m_state.state == PLAY) 
@@ -196,7 +199,7 @@ void Tetris::m_gameInterface()
     ImGui::Text("Score: %d", m_score);
     ImGui::Text("Level: %d", m_level);
     ImGui::Separator();
-    ImGui::Text("[A]/[D]  move right/left)");
+    ImGui::Text("[A]/[D]  move right/left");
     ImGui::Text("[W]/[S]  rotate CW/CCW");
     ImGui::Text("[E]      accelerate");
     ImGui::Text("[SPACE]  drop");
