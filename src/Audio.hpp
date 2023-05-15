@@ -40,7 +40,7 @@ public:
 
     /// @param num порядковый номер основной темы
     /// @return если переключилось, true
-    bool playSound(GAME_SOUNDS n);
+    void playSound(GAME_SOUNDS n);
 
     std::queue<GAME_SOUNDS> soundQueue;
 

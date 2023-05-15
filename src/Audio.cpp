@@ -46,7 +46,7 @@ bool Audio::switchMain(MainMusicType t)
     return true;
 }
 
-bool Audio::playSound(GAME_SOUNDS n)
+void Audio::playSound(GAME_SOUNDS n)
 {
     m_gameAudio[static_cast<int>(n)].play();
 }

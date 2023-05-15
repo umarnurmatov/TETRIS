@@ -13,7 +13,7 @@
 int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 4;
-    sf::VideoMode vm(sf::Vector2u(WINDOW_W, WINDOW_H));
+    sf::VideoMode vm(WINDOW_W, WINDOW_H);
     sf::RenderWindow window(vm, "Tetris", sf::Style::Default ^ sf::Style::Resize, settings);
     window.setFramerateLimit(60);
     bool imgui_sfml_init = ImGui::SFML::Init(window);

@@ -6,6 +6,7 @@
 #include <random>
 #include <array>
 #include <chrono>
+#include <cassert>
 
 #include "Utils.hpp"
 
@@ -27,7 +28,7 @@
 
 enum SquareType
 {
-    EMPTY,  // пустая клеточка
+    EMPTY,  // пустая клеточка 
     FALLING,// падающая тетраминошка
     FALLEN  // упавшая тетраминошка
 };

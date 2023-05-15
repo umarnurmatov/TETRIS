@@ -195,6 +195,8 @@ void Tetris::m_gameInterface()
     }
 
     ImGui::Begin("Hi", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+    ImGui::SetWindowSize(M_SIDE_INTERFACE_SIZE);
+    ImGui::SetWindowPos(M_SIDE_INTERFACE_POS);
     ImGui::Text("Lines: %d", m_lines);
     ImGui::Text("Score: %d", m_score);
     ImGui::Text("Level: %d", m_level);
@@ -207,8 +209,6 @@ void Tetris::m_gameInterface()
     ImGui::Text("[TAB]  pause the game");
     ImGui::Text("[P]    restart the game");
     ImGui::Text("[M]    main menu");
-    ImGui::SetWindowSize(M_SIDE_INTERFACE_SIZE);
-    ImGui::SetWindowPos(M_SIDE_INTERFACE_POS);
     
 
     if(m_state.state == MENU)
@@ -216,7 +216,9 @@ void Tetris::m_gameInterface()
 
     if (ImGui::BeginPopupModal("Menu", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar))
     {
-        
+        sf::Vector2i wSize = ImGui::GetWindowSize();
+        ImGui::SetWindowPos(M_WINDOW_SIZE / 2 - wSize / 2);
+
         ImGui::Image(m_logo, LOGO_SIZE);
         ImGui::Text(m_t.isGameEnd() ? "Re[s]tart" : "[S]tart");
         ImGui::Text("S[e]ttings");
@@ -237,8 +239,6 @@ void Tetris::m_gameInterface()
             ImGui::CloseCurrentPopup();
         }
 
-        sf::Vector2i wSize = ImGui::GetWindowSize();
-        ImGui::SetWindowPos(M_WINDOW_SIZE / 2 - wSize / 2);
         ImGui::EndPopup();
     }
 
@@ -247,6 +247,8 @@ void Tetris::m_gameInterface()
 
     if (ImGui::BeginPopupModal("Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar))
     {
+        sf::Vector2i wSize = ImGui::GetWindowSize();
+        ImGui::SetWindowPos(M_WINDOW_SIZE / 2 - wSize / 2);
         
         ImGui::Image(m_logo, LOGO_SIZE);
         ImGui::Text("[R]eturn");
@@ -278,8 +280,6 @@ void Tetris::m_gameInterface()
             m_t.setBackground(themeType);
         } 
 
-        sf::Vector2i wSize = ImGui::GetWindowSize();
-        ImGui::SetWindowPos(M_WINDOW_SIZE / 2 - wSize / 2);
         ImGui::EndPopup();
     }
 
